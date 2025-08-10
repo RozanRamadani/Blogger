@@ -12,11 +12,16 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Password;
+use App\Http\Controllers\ArticleController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', function () {
-        return view('home', ['title' => 'Home Page']);
+        $categories = Category::all();
+        return view('home', [
+            'title' => 'Home Page',
+            'categories' => $categories
+        ]);
     });
 
     Route::get('/about', function () {
@@ -42,6 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/kontak', function () {
         return view('kontak', ['title' => 'Kontak']);
     });
+
+    Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
 
     Route::get('/logout', [AuthController::class, 'logout']);
 });
