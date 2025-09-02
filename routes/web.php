@@ -25,7 +25,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/about', function () {
-        return view('about', ['title' => 'About', 'nama' => 'Rozan Aiman Ramadani']);
+        return view('about');
+    });
+
+    Route::get('/kontak', function () {
+        return view('kontak', ['title' => 'Kontak']);
     });
 
     Route::get('/posts', function () {
@@ -118,7 +122,7 @@ Route::middleware(['auth'])->group(function () {
     })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 });
 
-Route::get('/send-welcome-mail', function() {
+Route::get('/send-welcome-mail', function () {
     $users = [
         ['email' => 'shnfsjb@gmail.com', 'password' => '123456'],
         ['email' => 'hdsvcfgdsv@gmail.com', 'password' => '123456'],
@@ -131,5 +135,3 @@ Route::get('/send-welcome-mail', function() {
         ProcessWelcomeMail::dispatch($user)->onQueue('send-email');
     }
 });
-
-
