@@ -28,9 +28,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('about');
     });
 
-    Route::get('/kontak', function () {
-        return view('kontak', ['title' => 'Kontak']);
-    });
+    Route::get('/profile/edit', function () {
+        return view('edit-profile', ['user' => Auth::user()]);
+    })->middleware(['auth', 'verified'])->name('profile.edit');
+
+    Route::post('/profile/edit', [AuthController::class, 'updateProfile'])->middleware(['auth', 'verified'])->name('profile.update');
+
+    Route::post('/kontak', function (Request $request) {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'message' => 'required|string',
+        ]);
+
+        Mail::raw(
+            "Name: {$data['name']}\nEmail: {$data['email']}\nMessage: {$data['message']}",
+            function ($message) {
+                $message->to('admin@gmail.com')
+                    ->subject('New Contact Message');
+            }
+        );
+
+        return back()->with('success', 'Your message has been sent!');
+    })->name('kontak.send');
 
     Route::get('/posts', function () {
         return view('posts', ['title' => 'Blog', 'posts' => Post::filter(request(['search', 'category', 'author']))->latest()->paginate(6)->withQueryString()]);

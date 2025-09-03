@@ -10,7 +10,7 @@ use Illuminate\Auth\Events\Registered;
 class AuthController extends Controller
 {
     function login()
-    {   
+    {
         return view('login', ['title' => 'Login']);
     }
 
@@ -27,7 +27,7 @@ class AuthController extends Controller
             // Redirect to intended page or home
             return redirect()->intended('/')->with('success', 'Login successful!');
         }
-        
+
 
         // If login fails, redirect back with an error message
         return back()->withErrors([
@@ -67,5 +67,30 @@ class AuthController extends Controller
         event(new Registered($user));
 
         return redirect('/')->with('success', 'Registration successful! Please verify your email.');
+    }
+
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $user->name = $validated['name'];
+        $user->username = $validated['username'];
+        $user->email = $validated['email'];
+
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+
+        $user->save();
+
+        return redirect()->route('profile.edit')->with('success', 'Profile updated successfully!');
     }
 }

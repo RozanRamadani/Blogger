@@ -1,11 +1,49 @@
+{{-- filepath: c:\laragon\www\project1\resources\views\home.blade.php --}}
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
     <div class="max-w-2xl mx-auto p-4">
+        <!-- Profile Card -->
+        <div class="bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 rounded-xl shadow-lg p-6 mb-8 flex items-center gap-4">
+            <div class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg border-4 border-white dark:border-gray-700">
+                {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-1">{{ Auth::user()->name }}</h2>
+                <p class="text-gray-600 dark:text-gray-300 text-sm">Username: <span class="font-semibold">{{ Auth::user()->username }}</span></p>
+                <p class="text-gray-600 dark:text-gray-300 text-sm">Email: <span class="font-semibold">{{ Auth::user()->email }}</span></p>
+            </div>
+        </div>
+
         <!-- Welcome Message -->
         <div class="text-center mb-8">
             <h1 class="text-2xl font-bold mb-2">Welcome to My App</h1>
-            <p class="text-gray-600">A simple social platform</p>
+            <p class="text-gray-600">A simple social platform. Share your thoughts and connect!</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="flex justify-between gap-4 mb-8">
+            <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
+                <div class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ Auth::user()->posts()->count() }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-300">Your Posts</div>
+            </div>
+            <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
+                <div class="text-lg font-bold text-purple-600 dark:text-purple-400">{{ $categories->count() }}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-300">Categories</div>
+            </div>
+        </div>
+
+        <!-- Category List -->
+        <div class="mb-8">
+            <h2 class="text-lg font-bold mb-3 text-gray-800 dark:text-white">Explore Categories</h2>
+            <div class="flex flex-wrap gap-2">
+                @foreach ($categories as $category)
+                    <a href="/categories/{{ $category->slug }}"
+                        class="px-4 py-2 rounded-lg bg-{{ $category->color }}-200 dark:bg-{{ $category->color }}-900 text-{{ $category->color }}-800 dark:text-{{ $category->color }}-200 font-semibold shadow hover:scale-105 transition">
+                        {{ $category->name }}
+                    </a>
+                @endforeach
+            </div>
         </div>
 
         <!-- Simple Post Form -->

@@ -29,13 +29,13 @@ class CategorySeeder extends Seeder
         Category::create([
             'name' => 'Mobile Development',
             'slug' => 'mobile-development',
-            'color' => 'purple'
+            'color' => '#a78bfa' // purple-400
         ]);
 
         Category::create([
             'name' => 'UI/UX Design',
             'slug' => 'ui-ux-design',
-            'color' => 'red'
+            'color' => '#ef4444' // red-500
         ]);
     }
 }
