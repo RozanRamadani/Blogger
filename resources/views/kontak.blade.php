@@ -1,4 +1,3 @@
-{{-- filepath: c:\laragon\www\project1\resources\views\kontak.blade.php --}}
 <x-layout>
     <x-slot:title>Contact Us</x-slot:title>
 
@@ -18,23 +17,32 @@
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Your
                     Name</label>
-                <input type="text" name="name" id="name"
+                <input type="text" name="name" id="name" value="{{ old('name') }}"
                     class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder="Enter your name" required>
+                @error('name')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
             </div>
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Email
                     Address</label>
-                <input type="email" name="email" id="email"
+                <input type="email" name="email" id="email" value="{{ old('email') }}"
                     class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder="Enter your email" required>
+                @error('email')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
             </div>
             <div>
                 <label for="message"
                     class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Message</label>
                 <textarea name="message" id="message" rows="5"
                     class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    placeholder="Type your message..." required></textarea>
+                    placeholder="Type your message..." required>{{ old('message') }}</textarea>
+                @error('message')
+                    <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                @enderror
             </div>
             <button type="submit"
                 class="w-full py-3 px-6 bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 hover:from-green-500 hover:via-blue-500 hover:to-purple-500 text-white font-bold rounded-lg shadow-lg transition duration-150">

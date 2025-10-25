@@ -17,15 +17,21 @@ class UserSeeder extends Seeder
     
     {
         $plainPassword = 'rozan123';
-        User::factory()->create([
+
+        // Create or update the primary user to avoid duplicate seed errors
+        User::updateOrCreate([
+            'email' => 'rozan@gmail.com',
+        ], [
             'name' => 'Rozan Aiman Ramadani',
             'username' => 'rozanaiman',
-            'email' => 'rozan@gmail.com',
             'email_verified_at' => now(),
             'password' => Hash::make($plainPassword), // Use Hash facade to hash the password
             'remember_token' => Str::random(10),
         ]);
-        
-        User::factory()->create();
+
+        // Create one additional random user if there is no other user
+        if (User::count() < 2) {
+            User::factory()->create();
+        }
     }
 }

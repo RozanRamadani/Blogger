@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\Registered;
+use App\Jobs\ProcessWelcomeMail;
 
 class AuthController extends Controller
 {
@@ -64,7 +65,11 @@ class AuthController extends Controller
 
         Auth::login($user);
 
+        // fire the Registered event (email verification) and dispatch a queued welcome mail
         event(new Registered($user));
+
+        // Dispatch welcome mail job with the User model (safe serialization)
+        ProcessWelcomeMail::dispatch($user)->onQueue('send-email');
 
         return redirect('/')->with('success', 'Registration successful! Please verify your email.');
     }

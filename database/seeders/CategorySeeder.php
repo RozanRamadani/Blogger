@@ -14,28 +14,18 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         // Category::factory(4)->create();
-        Category::create([
-            'name' => 'Web Programming',
-            'slug' => 'web-programming',
-            'color' => 'blue'
-        ]);
+        $categories = [
+            ['name' => 'Web Programming', 'slug' => 'web-programming', 'color' => 'blue'],
+            ['name' => 'Web Design', 'slug' => 'web-design', 'color' => 'green'],
+            ['name' => 'Mobile Development', 'slug' => 'mobile-development', 'color' => '#a78bfa'], // purple-400
+            ['name' => 'UI/UX Design', 'slug' => 'ui-ux-design', 'color' => '#ef4444'], // red-500
+        ];
 
-        Category::create([
-            'name' => 'Web Design',
-            'slug' => 'web-design',
-            'color' => 'green'
-        ]);
-
-        Category::create([
-            'name' => 'Mobile Development',
-            'slug' => 'mobile-development',
-            'color' => '#a78bfa' // purple-400
-        ]);
-
-        Category::create([
-            'name' => 'UI/UX Design',
-            'slug' => 'ui-ux-design',
-            'color' => '#ef4444' // red-500
-        ]);
+        foreach ($categories as $cat) {
+            Category::updateOrCreate(
+                ['slug' => $cat['slug']],
+                ['name' => $cat['name'], 'color' => $cat['color']]
+            );
+        }
     }
 }

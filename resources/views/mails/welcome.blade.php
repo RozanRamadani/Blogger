@@ -9,7 +9,8 @@
 <body>
     <h1>Welcome to mail</h1>
     <br>
-    <h2>Email : {{ $email }}</h2>
-    <h2>Password : {{ $password }}</h2>
+    <h2>Hi, {{ $name }}</h2>
+    <h3>Your email: {{ $email }}</h3>
+    <p>Welcome to our application — please verify your email if you haven't already.</p>
 </body>
 </html>

@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Models\Category;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Jobs\ProcessWelcomeMail;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -41,24 +43,80 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'message' => 'required|string',
         ]);
 
-        Mail::raw(
-            "Name: {$data['name']}\nEmail: {$data['email']}\nMessage: {$data['message']}",
-            function ($message) {
-                $message->to('admin@gmail.com')
-                    ->subject('New Contact Message');
-            }
-        );
+        // Save to database
+        $contact = App\Models\Contact::create($data);
+
+    // Send notification to admin (queued)
+    Mail::to(config('mail.from.address'))->queue(new App\Mail\ContactReceived($contact));
 
         return back()->with('success', 'Your message has been sent!');
     })->name('kontak.send');
 
     Route::get('/posts', function () {
-        return view('posts', ['title' => 'Blog', 'posts' => Post::filter(request(['search', 'category', 'author']))->latest()->paginate(6)->withQueryString()]);
+        $posts = Post::filter(request(['search', 'category', 'author']))
+            ->with(['author', 'category']) // Eager loading
+            ->latest()
+            ->paginate(6)
+            ->withQueryString();
+        
+        return view('posts', ['title' => 'Blog', 'posts' => $posts]);
+    });
+
+    // Infinite scroll endpoint
+    Route::get('/posts/load-more', function (Request $request) {
+        $posts = Post::filter($request->only(['search', 'category', 'author']))
+            ->with(['author', 'category'])
+            ->latest()
+            ->paginate(6);
+
+        $postsData = $posts->map(function ($post) {
+            return [
+                'slug' => $post->slug,
+                'title' => $post->title,
+                'excerpt' => Str::limit($post->body, 120),
+                'body' => $post->body,
+                'image' => $post->image,
+                'image_url' => $post->image ? asset('storage/' . $post->image) : null,
+                'created_at' => $post->created_at->toDateTimeString(),
+                'created_at_human' => $post->created_at->diffForHumans(),
+                'author_name' => $post->author->name,
+                'author_username' => $post->author->username,
+                'author_initials' => strtoupper(substr($post->author->name, 0, 2)),
+                'category_name' => $post->category->name,
+                'category_slug' => $post->category->slug,
+                'category_color' => $post->category->color,
+                'can_update' => auth()->check() && auth()->user()->can('update', $post),
+            ];
+        });
+
+        return response()->json([
+            'posts' => $postsData,
+            'hasMore' => $posts->hasMorePages(),
+            'currentPage' => $posts->currentPage(),
+            'lastPage' => $posts->lastPage(),
+        ]);
     });
 
     Route::get('/posts/{post:slug}', function (Post $post) {
-        return view('post', ['title' => 'Single Post', 'post' => $post]);
+        // Get related posts from same category, excluding current post
+        $relatedPosts = Post::where('category_id', $post->category_id)
+            ->where('id', '!=', $post->id)
+            ->with(['author', 'category'])
+            ->latest()
+            ->take(3)
+            ->get();
+        
+        return view('post', [
+            'title' => 'Single Post', 
+            'post' => $post,
+            'relatedPosts' => $relatedPosts
+        ]);
     });
+
+    // Edit, update, delete post routes
+    Route::get('/posts/{post:slug}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
+    Route::put('/posts/{post:slug}', [ArticleController::class, 'update'])->name('articles.update');
+    Route::delete('/posts/{post:slug}', [ArticleController::class, 'destroy'])->name('articles.destroy');
 
     Route::get('/author/{user:username}', function (User $user) {
         return view('posts', ['title' => count($user->posts) . ' Articles by ' . $user->name, 'posts' => $user->posts]);
@@ -75,6 +133,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
 
     Route::get('/logout', [AuthController::class, 'logout']);
+
+    // Live Search API
+    Route::get('/api/search', function (Request $request) {
+        $query = $request->input('q');
+        
+        if (strlen($query) < 2) {
+            return response()->json([]);
+        }
+        
+        $posts = Post::with(['author', 'category'])
+            ->where('title', 'LIKE', "%{$query}%")
+            ->orWhere('body', 'LIKE', "%{$query}%")
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($post) {
+                return [
+                    'slug' => $post->slug,
+                    'title' => $post->title,
+                    'body' => $post->body,
+                    'excerpt' => Str::limit($post->body, 120),
+                    'author_name' => $post->author->name,
+                    'category_name' => $post->category->name,
+                    'category_color' => $post->category->color,
+                ];
+            });
+        
+        return response()->json($posts);
+    })->name('api.search');
 });
 
 Route::middleware('guest')->group(function () {
@@ -155,3 +242,8 @@ Route::get('/send-welcome-mail', function () {
         ProcessWelcomeMail::dispatch($user)->onQueue('send-email');
     }
 });
+
+// SEO Routes
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+Route::get('/robots.txt', [SitemapController::class, 'robots']);
+

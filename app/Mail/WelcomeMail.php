@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\User;
 
 class WelcomeMail extends Mailable
 {
@@ -19,7 +20,7 @@ class WelcomeMail extends Mailable
      * Create a new message instance.
      */
     public function __construct(
-        protected $data
+        protected User $user
     )
     {
         //
@@ -47,8 +48,8 @@ class WelcomeMail extends Mailable
         return new Content(
             view: 'mails.welcome',
             with: [
-                'email' => $this->data['email'],
-                'password' => $this->data['password'],
+                'email' => $this->user->email,
+                'name' => $this->user->name,
             ]
         );
     }
