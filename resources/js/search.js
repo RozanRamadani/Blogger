@@ -62,11 +62,11 @@ function displaySearchResults(posts) {
     }
     
     const resultsHTML = posts.map(post => `
-        <a href="/posts/${post.slug}" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-0">
-            <h3 class="font-semibold text-gray-900 dark:text-white mb-1">${escapeHtml(post.title)}</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">${escapeHtml(post.excerpt || post.body).substring(0, 120)}...</p>
-            <div class="flex items-center gap-2 mt-2 text-xs text-gray-500 dark:text-gray-400">
-                <span class="px-2 py-0.5 rounded bg-${post.category_color}-100 dark:bg-${post.category_color}-900 text-${post.category_color}-800 dark:text-${post.category_color}-200">${post.category_name}</span>
+        <a href="/posts/${post.slug}" class="block p-4 hover:bg-cream-50 dark:hover:bg-charcoal-700 transition-colors border-b border-charcoal-100 dark:border-charcoal-700 last:border-0">
+            <h3 class="font-semibold text-charcoal-900 dark:text-cream-50 mb-1">${escapeHtml(post.title)}</h3>
+            <p class="text-sm text-charcoal-600 dark:text-cream-300 line-clamp-2">${escapeHtml(post.excerpt || post.body).substring(0, 120)}...</p>
+            <div class="flex items-center gap-2 mt-2 text-xs text-charcoal-500 dark:text-cream-400">
+                <span class="px-2 py-0.5 rounded-full bg-terracotta-100 dark:bg-terracotta-900/40 text-terracotta-800 dark:text-terracotta-300 border border-terracotta-200 dark:border-terracotta-800">${post.category_name}</span>
                 <span>•</span>
                 <span>${post.author_name}</span>
             </div>

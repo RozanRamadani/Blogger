@@ -98,71 +98,67 @@ export function initInfiniteScroll() {
 
     function createPostElement(post, index) {
         const article = document.createElement('article');
-        article.className = 'group relative p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden';
+        article.className = 'group bg-white dark:bg-charcoal-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-charcoal-100 dark:border-charcoal-700';
         article.setAttribute('data-aos', 'fade-up');
         article.setAttribute('data-aos-delay', (index % 6) * 50);
 
         article.innerHTML = `
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-            
             ${post.image ? `
-                <div class="relative mb-4 -mx-6 -mt-6 overflow-hidden rounded-t-2xl">
+                <a href="/posts/${post.slug}" class="block overflow-hidden">
                     <img 
                         src="${post.image_url}" 
                         alt="${escapeHtml(post.title)}"
                         loading="lazy"
-                        class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700"
+                        class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-700"
                     >
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                </div>
+                </a>
             ` : ''}
 
-            <div class="flex justify-between items-center mb-4 text-gray-500 relative z-10">
-                <a href="/posts?category=${post.category_slug}" class="group/cat">
-                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-${post.category_color}-100 dark:bg-${post.category_color}-900 text-${post.category_color}-800 dark:text-${post.category_color}-200 shadow-sm hover:shadow-md transition-all duration-300 transform group-hover/cat:scale-110">
+            <div class="p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-terracotta-100 dark:bg-terracotta-900/40 text-terracotta-800 dark:text-terracotta-300 border border-terracotta-200 dark:border-terracotta-800">
                         ${escapeHtml(post.category_name)}
                     </span>
+                    <span class="text-sm text-charcoal-500 dark:text-cream-400 font-medium">${post.created_at_human}</span>
+                </div>
+
+                <a href="/posts/${post.slug}">
+                    <h3 class="font-display text-2xl font-bold text-charcoal-900 dark:text-cream-50 mb-4 leading-tight group-hover:text-terracotta-600 dark:group-hover:text-terracotta-400 transition-colors line-clamp-2">
+                        ${escapeHtml(post.title)}
+                    </h3>
                 </a>
-                <span class="text-sm text-gray-500 dark:text-gray-400">${post.created_at_human}</span>
-            </div>
 
-            <a href="/posts/${post.slug}" class="relative z-10">
-                <h2 class="mb-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:via-purple-600 group-hover:to-pink-600 transition-all duration-300">
-                    ${escapeHtml(post.title)}
-                </h2>
-            </a>
+                <p class="text-charcoal-600 dark:text-cream-300 mb-6 leading-relaxed line-clamp-3">
+                    ${escapeHtml(post.excerpt)}
+                </p>
 
-            <p class="mb-5 font-light text-gray-600 dark:text-gray-400 line-clamp-3 relative z-10">
-                ${escapeHtml(post.excerpt)}
-            </p>
-
-            <div class="flex justify-between items-center relative z-10">
-                <a href="/posts?author=${post.author_username}" class="group/author">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm transform group-hover/author:scale-110 transition-transform duration-300 shadow-md">
+                <div class="flex items-center justify-between pt-6 border-t border-charcoal-100 dark:border-charcoal-700">
+                    <a href="/posts?author=${post.author_username}" class="flex items-center space-x-3 group/author">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-terracotta-500 to-olive-600 flex items-center justify-center text-cream-50 text-sm font-semibold shadow-md">
                             ${post.author_initials}
                         </div>
-                        <span class="font-medium text-sm dark:text-white group-hover/author:text-primary-600 dark:group-hover/author:text-primary-400 transition-colors">
+                        <span class="text-sm font-semibold text-charcoal-700 dark:text-cream-200 group-hover/author:text-terracotta-600 dark:group-hover/author:text-terracotta-400 transition-colors">
                             ${escapeHtml(post.author_name)}
                         </span>
-                    </div>
-                </a>
-
-                <div class="flex items-center gap-2">
-                    <a href="/posts/${post.slug}" class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
-                        Read
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
                     </a>
-                    ${post.can_update ? `
-                        <a href="/posts/${post.slug}/edit" class="inline-flex items-center text-sm px-3 py-1.5 rounded-lg bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 hover:bg-yellow-200 dark:hover:bg-yellow-800 transition-colors duration-300">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+
+                    <div class="flex items-center gap-2">
+                        <a href="/posts/${post.slug}" 
+                           class="inline-flex items-center text-sm font-semibold text-terracotta-600 dark:text-terracotta-400 hover:text-terracotta-700 dark:hover:text-terracotta-300 transition-colors">
+                            Read more
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                             </svg>
-                            Edit
                         </a>
-                    ` : ''}
+                        ${post.can_update ? `
+                            <a href="/posts/${post.slug}/edit" 
+                               class="p-2 text-charcoal-500 dark:text-cream-400 hover:text-terracotta-600 dark:hover:text-terracotta-400 hover:bg-cream-100 dark:hover:bg-charcoal-700 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </a>
+                        ` : ''}
+                    </div>
                 </div>
             </div>
         `;

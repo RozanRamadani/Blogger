@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Jobs\ProcessWelcomeMail;
 use Illuminate\Support\Facades\Auth;
@@ -84,7 +86,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'author_initials' => strtoupper(substr($post->author->name, 0, 2)),
                 'category_name' => $post->category->name,
                 'category_slug' => $post->category->slug,
-                'category_color' => $post->category->color,
                 'can_update' => auth()->check() && auth()->user()->can('update', $post),
             ];
         });
@@ -98,6 +99,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/posts/{post:slug}', function (Post $post) {
+        // Quick instrumentation to measure server-side render time and query count for this route.
+        $start = microtime(true);
+        DB::enableQueryLog();
+
         // Get related posts from same category, excluding current post
         $relatedPosts = Post::where('category_id', $post->category_id)
             ->where('id', '!=', $post->id)
@@ -105,7 +110,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->latest()
             ->take(3)
             ->get();
-        
+
+        $duration = round((microtime(true) - $start) * 1000, 2); // ms
+        $queries = count(DB::getQueryLog());
+        Log::info('Route /posts/{post} render', ['slug' => $post->slug, 'duration_ms' => $duration, 'db_queries' => $queries]);
+
         return view('post', [
             'title' => 'Single Post', 
             'post' => $post,
@@ -156,7 +165,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     'excerpt' => Str::limit($post->body, 120),
                     'author_name' => $post->author->name,
                     'category_name' => $post->category->name,
-                    'category_color' => $post->category->color,
                 ];
             });
         

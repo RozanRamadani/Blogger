@@ -28,8 +28,8 @@
     {{-- Preload critical fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lora:wght@400;500;600;700&display=swap" as="style">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" as="style">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
@@ -77,23 +77,19 @@
     
     @stack('styles')
 </head>
-<body class="h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+<body class="h-full bg-cream-50 dark:bg-charcoal-950 text-charcoal-900 dark:text-cream-50 font-sans antialiased transition-colors duration-300">
     <div class="min-h-full flex flex-col">
-        <x-modern-navbar />
+        <x-minimal-navbar />
 
         <main class="flex-grow">
-            @isset($title)
-                <x-header>{{ $title }}</x-header>
-            @endisset
-            
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                {{-- Flash Messages with Alpine.js auto-hide --}}
-                @if(session('success'))
-                    <div x-data="{ show: true }" 
-                         x-show="show" 
-                         x-transition
-                         x-init="$nextTick(() => setTimeout(() => show = false, 5000))"
-                         class="mb-6 p-4 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 animate-slide-down">
+            {{-- Flash Messages with Alpine.js auto-hide --}}
+            @if(session('success'))
+                <div x-data="{ show: true }" 
+                     x-show="show" 
+                     x-transition
+                     x-init="$nextTick(() => setTimeout(() => show = false, 5000))"
+                     class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+                    <div class="p-4 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 animate-slide-down">
                         <div class="flex items-center justify-between">
                             <p class="font-medium">{{ session('success') }}</p>
                             <button @click="show = false" class="ml-4 text-green-600 hover:text-green-800 dark:text-green-400 transition-colors">
@@ -103,14 +99,16 @@
                             </button>
                         </div>
                     </div>
-                @endif
+                </div>
+            @endif
 
-                @if(session('error'))
-                    <div x-data="{ show: true }" 
-                         x-show="show" 
-                         x-transition
-                         x-init="$nextTick(() => setTimeout(() => show = false, 5000))"
-                         class="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 animate-slide-down">
+            @if(session('error'))
+                <div x-data="{ show: true }" 
+                     x-show="show" 
+                     x-transition
+                     x-init="$nextTick(() => setTimeout(() => show = false, 5000))"
+                     class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+                    <div class="p-4 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 animate-slide-down">
                         <div class="flex items-center justify-between">
                             <p class="font-medium">{{ session('error') }}</p>
                             <button @click="show = false" class="ml-4 text-red-600 hover:text-red-800 dark:text-red-400 transition-colors">
@@ -120,13 +118,13 @@
                             </button>
                         </div>
                     </div>
-                @endif
-                
-                {{ $slot }}
-            </div>
+                </div>
+            @endif
+            
+            {{ $slot }}
         </main>
 
-        <x-modern-footer />
+        <x-minimal-footer />
         
         @stack('scripts')
     </div>
