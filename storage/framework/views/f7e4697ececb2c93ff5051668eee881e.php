@@ -1,7 +1,16 @@
-<x-layout>
-    <x-slot:title>{{ $title }}</x-slot:title>
+<?php if (isset($component)) { $__componentOriginal1f9e5f64f242295036c059d9dc1c375c = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1f9e5f64f242295036c059d9dc1c375c = $attributes; } ?>
+<?php $component = App\View\Components\Layout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Layout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('title', null, []); ?> <?php echo e($title); ?> <?php $__env->endSlot(); ?>
 
-    {{-- Hero Section - Clean & Simple --}}
+    
     <section class="relative bg-white dark:bg-charcoal-900 overflow-hidden">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
             <div class="text-center space-y-6">
@@ -25,7 +34,7 @@
         </div>
     </section>
 
-    {{-- Categories Grid --}}
+    
     <section class="py-16 bg-cream-50 dark:bg-charcoal-950">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
@@ -38,40 +47,44 @@
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                @foreach ($categories as $category)
-                    <a href="/categories/{{ $category->slug }}"
+                <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <a href="/categories/<?php echo e($category->slug); ?>"
                        class="group bg-white dark:bg-charcoal-800 rounded-lg p-6 hover:shadow-lg transition-all duration-200 border border-charcoal-100 dark:border-charcoal-700 hover:border-primary-300 dark:hover:border-primary-600">
                         <div class="text-center">
                             <div class="w-12 h-12 mx-auto rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-lg mb-3 group-hover:scale-110 transition-transform">
-                                {{ strtoupper(substr($category->name, 0, 1)) }}
+                                <?php echo e(strtoupper(substr($category->name, 0, 1))); ?>
+
                             </div>
                             <h3 class="font-semibold text-charcoal-900 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                                {{ $category->name }}
+                                <?php echo e($category->name); ?>
+
                             </h3>
                             <p class="text-sm text-charcoal-500 dark:text-charcoal-400">
-                                {{ $category->posts->count() }} artikel
+                                <?php echo e($category->posts->count()); ?> artikel
                             </p>
                         </div>
                     </a>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
     </section>
 
-    {{-- User Dashboard (for logged-in user) --}}
-    @auth
+    
+    <?php if(auth()->guard()->check()): ?>
     <section class="py-12 bg-white dark:bg-charcoal-900">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="w-14 h-14 rounded-full bg-primary-600 flex items-center justify-center text-white font-bold text-xl">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    <?php echo e(strtoupper(substr(Auth::user()->name, 0, 1))); ?>
+
                 </div>
                 <div>
                     <h3 class="text-xl font-bold text-charcoal-900 dark:text-white">
-                        Halo, {{ Auth::user()->name }}!
+                        Halo, <?php echo e(Auth::user()->name); ?>!
                     </h3>
                     <p class="text-charcoal-600 dark:text-charcoal-300">
-                        {{ Auth::user()->username }}
+                        <?php echo e(Auth::user()->username); ?>
+
                     </p>
                 </div>
             </div>
@@ -79,13 +92,15 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-cream-50 dark:bg-charcoal-800 rounded-lg p-5 border border-charcoal-100 dark:border-charcoal-700">
                     <div class="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-1">
-                        {{ Auth::user()->posts()->count() }}
+                        <?php echo e(Auth::user()->posts()->count()); ?>
+
                     </div>
                     <div class="text-sm text-charcoal-600 dark:text-charcoal-300">Artikel Saya</div>
                 </div>
                 <div class="bg-cream-50 dark:bg-charcoal-800 rounded-lg p-5 border border-charcoal-100 dark:border-charcoal-700">
                     <div class="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-1">
-                        {{ $categories->count() }}
+                        <?php echo e($categories->count()); ?>
+
                     </div>
                     <div class="text-sm text-charcoal-600 dark:text-charcoal-300">Kategori</div>
                 </div>
@@ -98,34 +113,35 @@
             </div>
         </div>
     </section>
-    @endauth
+    <?php endif; ?>
 
-    {{-- Create Post Form (for logged-in user) --}}
-    @auth
+    
+    <?php if(auth()->guard()->check()): ?>
     <section class="py-16 bg-cream-50 dark:bg-charcoal-950">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-3xl font-bold text-charcoal-900 dark:text-white mb-8">
                 Tulis Artikel Baru
             </h2>
 
-            <form action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data" class="bg-white dark:bg-charcoal-800 rounded-lg border border-charcoal-200 dark:border-charcoal-700 p-8" x-data="{ files: [] }"
+            <form action="<?php echo e(route('articles.store')); ?>" method="POST" enctype="multipart/form-data" class="bg-white dark:bg-charcoal-800 rounded-lg border border-charcoal-200 dark:border-charcoal-700 p-8" x-data="{ files: [] }"
                   @submit="const dt = new DataTransfer(); files.forEach(f => dt.items.add(f)); $el.querySelector('#imgInput').files = dt.files;">
-                @csrf
+                <?php echo csrf_field(); ?>
 
-                @if ($errors->any())
+                <?php if($errors->any()): ?>
                     <div class="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800">
                         <ul class="space-y-1 text-sm text-red-800 dark:text-red-200">
-                            @foreach ($errors->all() as $error)
+                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <li class="flex items-start">
                                     <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                                     </svg>
-                                    {{ $error }}
+                                    <?php echo e($error); ?>
+
                                 </li>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </ul>
                     </div>
-                @endif
+                <?php endif; ?>
 
                 <div class="space-y-6">
                     <div>
@@ -135,7 +151,7 @@
                         <input type="text"
                                name="title"
                                required
-                               value="{{ old('title') }}"
+                               value="<?php echo e(old('title')); ?>"
                                class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                                placeholder="Masukkan judul artikel...">
                     </div>
@@ -148,7 +164,7 @@
                                   rows="8"
                                   required
                                   class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
-                                  placeholder="Tulis cerita Anda...">{{ old('body') }}</textarea>
+                                  placeholder="Tulis cerita Anda..."><?php echo e(old('body')); ?></textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -160,17 +176,18 @@
                                     required
                                     class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
                                 <option value="">Pilih kategori</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
+                                <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($category->id); ?>" <?php echo e(old('category_id') == $category->id ? 'selected' : ''); ?>>
+                                        <?php echo e($category->name); ?>
+
                                     </option>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
 
                     </div>
 
-                    {{-- Images Upload --}}
+                    
                     <div>
                         <input type="file" id="imgInput" name="images[]" accept="image/*" multiple class="hidden"
                                @change="Array.from($event.target.files).forEach(f => files.push(f)); $event.target.value = '';">
@@ -198,7 +215,7 @@
                             </div>
                         </div>
 
-                        {{-- Upload Button --}}
+                        
                         <div class="flex gap-2">
                             <button type="button" @click="$el.closest('div').parentElement.querySelector('#imgInput').click()"
                                     class="inline-flex items-center px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition shadow-sm hover:shadow-md">
@@ -229,5 +246,15 @@
             </form>
         </div>
     </section>
-    @endauth
-</x-layout>
+    <?php endif; ?>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1f9e5f64f242295036c059d9dc1c375c)): ?>
+<?php $attributes = $__attributesOriginal1f9e5f64f242295036c059d9dc1c375c; ?>
+<?php unset($__attributesOriginal1f9e5f64f242295036c059d9dc1c375c); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1f9e5f64f242295036c059d9dc1c375c)): ?>
+<?php $component = $__componentOriginal1f9e5f64f242295036c059d9dc1c375c; ?>
+<?php unset($__componentOriginal1f9e5f64f242295036c059d9dc1c375c); ?>
+<?php endif; ?>
+<?php /**PATH C:\laragon\www\project1\resources\views/home.blade.php ENDPATH**/ ?>

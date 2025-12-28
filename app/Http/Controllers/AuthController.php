@@ -84,6 +84,7 @@ class AuthController extends Controller
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $user->name = $validated['name'];
@@ -94,8 +95,21 @@ class AuthController extends Controller
             $user->password = bcrypt($validated['password']);
         }
 
+        // Handle profile photo upload
+        if ($request->hasFile('profile_photo')) {
+            // Delete old photo if exists
+            if ($user->profile_photo && file_exists(public_path('storage/' . $user->profile_photo))) {
+                unlink(public_path('storage/' . $user->profile_photo));
+            }
+
+            // Store new photo
+            $fileName = time() . '_' . $request->file('profile_photo')->getClientOriginalName();
+            $request->file('profile_photo')->move(public_path('storage/profile-photos'), $fileName);
+            $user->profile_photo = 'profile-photos/' . $fileName;
+        }
+
         $user->save();
 
-        return redirect()->route('profile.edit')->with('success', 'Profile updated successfully!');
+        return redirect()->route('profile.edit')->with('success', 'Profil berhasil diperbarui!');
     }
 }

@@ -12,8 +12,12 @@ use App\Models\Category;
 class Post extends Model
 {
     use HasFactory;
-    protected $fillable = ['title', 'slug', 'body', 'author_id', 'category_id', 'image'];
+    protected $fillable = ['title', 'slug', 'body', 'author_id', 'category_id', 'image', 'images'];
     protected $with = ['author', 'category'];
+
+    protected $casts = [
+        'images' => 'array',
+    ];
 
     /**
      * The "booted" method of the model.
@@ -34,12 +38,12 @@ class Post extends Model
         });
     }
 
-    public function author(): BelongsTo 
+    public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function category(): BelongsTo 
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }

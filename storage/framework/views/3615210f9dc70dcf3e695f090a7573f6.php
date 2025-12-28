@@ -1,7 +1,16 @@
-<x-layout>
-    <x-slot:title>Kontak</x-slot:title>
+<?php if (isset($component)) { $__componentOriginal1f9e5f64f242295036c059d9dc1c375c = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1f9e5f64f242295036c059d9dc1c375c = $attributes; } ?>
+<?php $component = App\View\Components\Layout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Layout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('title', null, []); ?> Kontak <?php $__env->endSlot(); ?>
 
-    {{-- Hero Section --}}
+    
     <section class="relative bg-gradient-to-br from-cream-50 to-white dark:from-charcoal-950 dark:to-charcoal-900 border-b border-charcoal-200 dark:border-charcoal-700 py-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-4xl md:text-5xl font-bold text-charcoal-900 dark:text-white mb-4 leading-tight">
@@ -13,11 +22,11 @@
         </div>
     </section>
 
-    {{-- Contact Form Section --}}
+    
     <section class="py-16 bg-white dark:bg-charcoal-900">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12">
-                {{-- Contact Info --}}
+                
                 <div class="space-y-6">
                     <div>
                         <h2 class="text-3xl font-bold text-charcoal-900 dark:text-white mb-4">
@@ -29,7 +38,7 @@
                         </p>
                     </div>
 
-                    {{-- Contact Cards --}}
+                    
                     <div class="space-y-4">
                         <div class="flex items-start gap-4 p-5 rounded-lg bg-cream-50 dark:bg-charcoal-800 border border-charcoal-200 dark:border-charcoal-700">
                             <div class="w-12 h-12 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
@@ -69,9 +78,9 @@
                     </div>
                 </div>
 
-                {{-- Contact Form --}}
+                
                 <div>
-                    @if (session('success'))
+                    <?php if(session('success')): ?>
                         <div class="mb-6 p-5 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 flex items-start gap-4">
                             <div class="w-8 h-8 rounded-lg bg-green-600 flex items-center justify-center flex-shrink-0">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,13 +89,13 @@
                             </div>
                             <div>
                                 <h4 class="font-semibold text-green-900 dark:text-green-200 mb-1">Berhasil!</h4>
-                                <p class="text-green-800 dark:text-green-300">{{ session('success') }}</p>
+                                <p class="text-green-800 dark:text-green-300"><?php echo e(session('success')); ?></p>
                             </div>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
-                    <form method="POST" action="{{ route('kontak.send') }}" class="bg-cream-50 dark:bg-charcoal-800 rounded-2xl shadow-lg border border-charcoal-200 dark:border-charcoal-700 p-8">
-                        @csrf
+                    <form method="POST" action="<?php echo e(route('kontak.send')); ?>" class="bg-cream-50 dark:bg-charcoal-800 rounded-2xl shadow-lg border border-charcoal-200 dark:border-charcoal-700 p-8">
+                        <?php echo csrf_field(); ?>
 
                         <div class="space-y-5">
                             <div>
@@ -96,18 +105,26 @@
                                 <input type="text"
                                        name="name"
                                        id="name"
-                                       value="{{ old('name') }}"
+                                       value="<?php echo e(old('name')); ?>"
                                        class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white placeholder-charcoal-400 dark:placeholder-charcoal-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                                        placeholder="Nama Lengkap"
                                        required>
-                                @error('name')
+                                <?php $__errorArgs = ['name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                     <p class="text-sm text-red-600 dark:text-red-400 mt-2 flex items-center">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                         </svg>
-                                        {{ $message }}
+                                        <?php echo e($message); ?>
+
                                     </p>
-                                @enderror
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
 
                             <div>
@@ -117,18 +134,26 @@
                                 <input type="email"
                                        name="email"
                                        id="email"
-                                       value="{{ old('email') }}"
+                                       value="<?php echo e(old('email')); ?>"
                                        class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white placeholder-charcoal-400 dark:placeholder-charcoal-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                                        placeholder="nama@email.com"
                                        required>
-                                @error('email')
+                                <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                     <p class="text-sm text-red-600 dark:text-red-400 mt-2 flex items-center">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                         </svg>
-                                        {{ $message }}
+                                        <?php echo e($message); ?>
+
                                     </p>
-                                @enderror
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
 
                             <div>
@@ -140,15 +165,23 @@
                                           rows="6"
                                           class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white placeholder-charcoal-400 dark:placeholder-charcoal-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all resize-none"
                                           placeholder="Tulis pesan Anda di sini..."
-                                          required>{{ old('message') }}</textarea>
-                                @error('message')
+                                          required><?php echo e(old('message')); ?></textarea>
+                                <?php $__errorArgs = ['message'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                     <p class="text-sm text-red-600 dark:text-red-400 mt-2 flex items-center">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                         </svg>
-                                        {{ $message }}
+                                        <?php echo e($message); ?>
+
                                     </p>
-                                @enderror
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
 
                             <button type="submit"
@@ -168,4 +201,14 @@
             </div>
         </div>
     </section>
-</x-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1f9e5f64f242295036c059d9dc1c375c)): ?>
+<?php $attributes = $__attributesOriginal1f9e5f64f242295036c059d9dc1c375c; ?>
+<?php unset($__attributesOriginal1f9e5f64f242295036c059d9dc1c375c); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1f9e5f64f242295036c059d9dc1c375c)): ?>
+<?php $component = $__componentOriginal1f9e5f64f242295036c059d9dc1c375c; ?>
+<?php unset($__componentOriginal1f9e5f64f242295036c059d9dc1c375c); ?>
+<?php endif; ?>
+<?php /**PATH C:\laragon\www\project1\resources\views/kontak.blade.php ENDPATH**/ ?>

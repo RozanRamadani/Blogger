@@ -1,8 +1,8 @@
-{{-- Clean & Simple Personal Blog Navbar --}}
+
 <nav class="sticky top-0 z-50 bg-white/95 dark:bg-charcoal-900/95 backdrop-blur-sm border-b border-charcoal-200 dark:border-charcoal-700 transition-all" x-data="{ mobileMenuOpen: false, searchOpen: false }">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
-            {{-- Logo / Brand --}}
+            
             <div class="flex-shrink-0">
                 <a href="/" class="group flex items-center space-x-2">
                     <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform">
@@ -14,7 +14,7 @@
                 </a>
             </div>
 
-            {{-- Desktop Navigation --}}
+            
             <div class="hidden md:flex items-center space-x-1">
                 <a href="/"
                    class="px-4 py-2 text-sm font-medium text-charcoal-700 dark:text-charcoal-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors rounded-lg hover:bg-cream-50 dark:hover:bg-charcoal-800">
@@ -38,9 +38,9 @@
                 </a>
             </div>
 
-            {{-- Actions --}}
+            
             <div class="flex items-center space-x-2">
-                {{-- Search Toggle Button --}}
+                
                 <button @click="searchOpen = !searchOpen"
                         type="button"
                         class="p-2 text-charcoal-600 dark:text-charcoal-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-cream-50 dark:hover:bg-charcoal-800 rounded-lg transition-all"
@@ -50,7 +50,7 @@
                     </svg>
                 </button>
 
-                {{-- Theme Toggle --}}
+                
                 <button onclick="toggleTheme()"
                         class="p-2 text-charcoal-600 dark:text-charcoal-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-cream-50 dark:hover:bg-charcoal-800 rounded-lg transition-all"
                         aria-label="Ganti tema">
@@ -62,25 +62,26 @@
                     </svg>
                 </button>
 
-                @auth
-                    {{-- User Menu Dropdown (Desktop) --}}
+                <?php if(auth()->guard()->check()): ?>
+                    
                     <div class="hidden md:block relative" x-data="{ open: false }">
                         <button @click="open = !open"
                                 class="flex items-center space-x-2 p-2 text-charcoal-700 dark:text-charcoal-200 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-cream-50 dark:hover:bg-charcoal-800 rounded-lg transition-all">
-                            @if(Auth::user()->profile_photo)
-                                <img src="{{ asset('storage/' . Auth::user()->profile_photo) }}" alt="Profile" class="w-8 h-8 rounded-full object-cover border-2 border-primary-200 dark:border-primary-600">
-                            @else
+                            <?php if(Auth::user()->profile_photo): ?>
+                                <img src="<?php echo e(asset('storage/' . Auth::user()->profile_photo)); ?>" alt="Profile" class="w-8 h-8 rounded-full object-cover border-2 border-primary-200 dark:border-primary-600">
+                            <?php else: ?>
                                 <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-semibold">
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    <?php echo e(strtoupper(substr(Auth::user()->name, 0, 1))); ?>
+
                                 </div>
-                            @endif
-                            <span class="text-sm font-medium">{{ Auth::user()->name }}</span>
+                            <?php endif; ?>
+                            <span class="text-sm font-medium"><?php echo e(Auth::user()->name); ?></span>
                             <svg class="w-4 h-4" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
 
-                        {{-- Dropdown Menu --}}
+                        
                         <div x-show="open"
                              @click.away="open = false"
                              x-transition:enter="transition ease-out duration-200"
@@ -90,25 +91,26 @@
                              x-transition:leave-start="opacity-100 scale-100"
                              x-transition:leave-end="opacity-0 scale-95"
                              class="absolute right-0 mt-2 w-64 bg-white dark:bg-charcoal-800 rounded-xl shadow-xl border border-charcoal-200 dark:border-charcoal-700 py-2 z-50">
-                            {{-- User Info Header --}}
+                            
                             <div class="px-4 py-3 border-b border-charcoal-200 dark:border-charcoal-700">
                                 <div class="flex items-center space-x-3">
-                                    @if(Auth::user()->profile_photo)
-                                        <img src="{{ asset('storage/' . Auth::user()->profile_photo) }}" alt="Profile" class="w-12 h-12 rounded-full object-cover border-2 border-primary-200 dark:border-primary-600">
-                                    @else
+                                    <?php if(Auth::user()->profile_photo): ?>
+                                        <img src="<?php echo e(asset('storage/' . Auth::user()->profile_photo)); ?>" alt="Profile" class="w-12 h-12 rounded-full object-cover border-2 border-primary-200 dark:border-primary-600">
+                                    <?php else: ?>
                                         <div class="w-12 h-12 rounded-full bg-primary-600 flex items-center justify-center text-white text-lg font-semibold">
-                                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                            <?php echo e(strtoupper(substr(Auth::user()->name, 0, 1))); ?>
+
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-xs font-medium text-charcoal-500 dark:text-charcoal-400 uppercase tracking-wide">Akun</p>
-                                        <p class="text-sm font-semibold text-charcoal-900 dark:text-white truncate mt-1">{{ Auth::user()->name }}</p>
-                                        <p class="text-xs text-charcoal-600 dark:text-charcoal-400 truncate">{{ Auth::user()->email }}</p>
+                                        <p class="text-sm font-semibold text-charcoal-900 dark:text-white truncate mt-1"><?php echo e(Auth::user()->name); ?></p>
+                                        <p class="text-xs text-charcoal-600 dark:text-charcoal-400 truncate"><?php echo e(Auth::user()->email); ?></p>
                                     </div>
                                 </div>
                             </div>
 
-                            {{-- Profile Section --}}
+                            
                             <div class="py-2">
                                 <a href="/about" class="flex items-center px-4 py-2.5 text-sm font-medium text-charcoal-700 dark:text-charcoal-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
                                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +128,7 @@
 
                             <div class="border-t border-charcoal-100 dark:border-charcoal-700"></div>
 
-                            {{-- Settings Section --}}
+                            
                             <div class="py-2">
                                 <a href="/profile/edit" class="flex items-center px-4 py-2.5 text-sm font-medium text-charcoal-700 dark:text-charcoal-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
                                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +140,7 @@
 
                             <div class="border-t border-charcoal-100 dark:border-charcoal-700"></div>
 
-                            {{-- Logout Section --}}
+                            
                             <div class="py-2">
                                 <a href="/logout" class="flex items-center px-4 py-2.5 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
                                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,8 +151,8 @@
                             </div>
                         </div>
                     </div>
-                @else
-                    {{-- Login/Register Buttons (Desktop) --}}
+                <?php else: ?>
+                    
                           <a href="/login"
                               class="hidden md:inline-flex items-center px-4 py-2 text-sm font-medium text-charcoal-700 dark:text-cream-200 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-cream-100 dark:hover:bg-charcoal-900 rounded-lg transition-all duration-200">
                         Sign in
@@ -159,9 +161,9 @@
                               class="hidden md:inline-flex items-center px-5 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
                         Sign up
                     </a>
-                @endauth
+                <?php endif; ?>
 
-                {{-- Mobile menu button --}}
+                
                 <button @click="mobileMenuOpen = !mobileMenuOpen"
                     type="button"
                     class="md:hidden p-2.5 text-charcoal-600 dark:text-cream-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-cream-100 dark:hover:bg-charcoal-900 rounded-lg transition-all duration-200"
@@ -177,7 +179,7 @@
         </div>
     </div>
 
-    {{-- Search Bar (Full Width) --}}
+    
     <div x-show="searchOpen"
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0 -translate-y-2"
@@ -188,7 +190,7 @@
          class="border-t border-charcoal-200/20 dark:border-cream-100/10 bg-cream-50 dark:bg-charcoal-950 py-4"
          x-data="{ searchType: 'posts', searchQuery: '', searchResults: [], searching: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {{-- Search Type Tabs --}}
+            
             <div class="flex gap-2 mb-3">
                 <button @click="searchType = 'posts'; searchQuery = ''; searchResults = []"
                         :class="searchType === 'posts' ? 'bg-primary-600 text-white' : 'bg-white dark:bg-charcoal-900 text-charcoal-700 dark:text-cream-100'"
@@ -208,7 +210,7 @@
                 </button>
             </div>
 
-            {{-- Search Input --}}
+            
             <div class="relative">
                 <input type="search"
                        x-model="searchQuery"
@@ -240,12 +242,12 @@
                 </div>
             </div>
 
-            {{-- Search Results --}}
+            
             <div x-show="searchResults.length > 0"
                  x-transition
                  class="mt-3 bg-white dark:bg-charcoal-900 rounded-xl shadow-lg border border-charcoal-200 dark:border-charcoal-700 overflow-hidden">
 
-                {{-- Posts Results --}}
+                
                 <template x-if="searchType === 'posts'">
                     <div class="divide-y divide-charcoal-100 dark:divide-charcoal-800">
                         <template x-for="post in searchResults" :key="post.slug">
@@ -263,7 +265,7 @@
                     </div>
                 </template>
 
-                {{-- Users Results --}}
+                
                 <template x-if="searchType === 'users'">
                     <div class="divide-y divide-charcoal-100 dark:divide-charcoal-800">
                         <template x-for="user in searchResults" :key="user.id">
@@ -287,7 +289,7 @@
                 </template>
             </div>
 
-            {{-- No Results --}}
+            
             <div x-show="searchQuery.length >= 2 && searchResults.length === 0 && !searching"
                  x-transition
                  class="mt-3 px-4 py-8 text-center text-charcoal-500 dark:text-cream-400 bg-white dark:bg-charcoal-900 rounded-xl border border-charcoal-200 dark:border-charcoal-700">
@@ -299,7 +301,7 @@
         </div>
     </div>
 
-    {{-- Mobile menu --}}
+    
     <div x-show="mobileMenuOpen"
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0 -translate-y-2"
@@ -309,7 +311,7 @@
          x-transition:leave-end="opacity-0 -translate-y-2"
          class="md:hidden border-t border-charcoal-200 dark:border-charcoal-700 bg-white dark:bg-charcoal-900">
         <div class="px-4 pt-2 pb-4 space-y-1">
-            {{-- Navigation Links --}}
+            
             <a href="/" class="block px-4 py-3 text-base font-medium text-charcoal-700 dark:text-charcoal-200 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors">
                 Beranda
             </a>
@@ -326,21 +328,22 @@
                 Kontak
             </a>
 
-            @auth
-                {{-- User Section --}}
+            <?php if(auth()->guard()->check()): ?>
+                
                 <div class="border-t border-charcoal-200 dark:border-charcoal-700 my-2 pt-2">
                     <div class="px-4 py-3 flex items-center space-x-3">
-                        @if(Auth::user()->profile_photo)
-                            <img src="{{ asset('storage/' . Auth::user()->profile_photo) }}" alt="Profile" class="w-12 h-12 rounded-full object-cover border-2 border-primary-200 dark:border-primary-600">
-                        @else
+                        <?php if(Auth::user()->profile_photo): ?>
+                            <img src="<?php echo e(asset('storage/' . Auth::user()->profile_photo)); ?>" alt="Profile" class="w-12 h-12 rounded-full object-cover border-2 border-primary-200 dark:border-primary-600">
+                        <?php else: ?>
                             <div class="w-12 h-12 rounded-full bg-primary-600 flex items-center justify-center text-white text-lg font-semibold">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                <?php echo e(strtoupper(substr(Auth::user()->name, 0, 1))); ?>
+
                             </div>
-                        @endif
+                        <?php endif; ?>
                         <div class="flex-1 min-w-0">
                             <p class="text-xs font-medium text-charcoal-500 dark:text-charcoal-400 uppercase tracking-wide">Akun</p>
-                            <p class="text-sm font-semibold text-charcoal-900 dark:text-white truncate mt-1">{{ Auth::user()->name }}</p>
-                            <p class="text-xs text-charcoal-600 dark:text-charcoal-400 truncate">{{ Auth::user()->email }}</p>
+                            <p class="text-sm font-semibold text-charcoal-900 dark:text-white truncate mt-1"><?php echo e(Auth::user()->name); ?></p>
+                            <p class="text-xs text-charcoal-600 dark:text-charcoal-400 truncate"><?php echo e(Auth::user()->email); ?></p>
                         </div>
                     </div>
                     <a href="/about" class="flex items-center px-4 py-3 text-base font-medium text-charcoal-700 dark:text-charcoal-200 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors">
@@ -362,8 +365,8 @@
                         Keluar
                     </a>
                 </div>
-            @else
-                {{-- Auth Buttons for Mobile --}}
+            <?php else: ?>
+                
                 <div class="border-t border-charcoal-200 dark:border-charcoal-700 my-2 pt-2 space-y-2">
                     <a href="/login" class="block px-4 py-3 text-center font-medium text-charcoal-700 dark:text-charcoal-200 border border-charcoal-300 dark:border-charcoal-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:border-primary-600 dark:hover:border-primary-400 rounded-lg transition-colors">
                         Masuk
@@ -372,7 +375,8 @@
                         Daftar
                     </a>
                 </div>
-            @endauth
+            <?php endif; ?>
         </div>
     </div>
 </nav>
+<?php /**PATH C:\laragon\www\project1\resources\views/components/minimal-navbar.blade.php ENDPATH**/ ?>

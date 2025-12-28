@@ -1,8 +1,8 @@
-{{-- Clean & Simple Personal Blog Footer --}}
+
 <footer class="bg-charcoal-900 dark:bg-charcoal-950 text-charcoal-200 border-t border-charcoal-700 dark:border-charcoal-800">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-            {{-- Brand Section --}}
+            
             <div class="md:col-span-5">
                 <div class="flex items-center space-x-2 mb-4">
                     <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
@@ -34,7 +34,7 @@
                 </div>
             </div>
 
-            {{-- Quick Links --}}
+            
             <div class="md:col-span-2">
                 <h3 class="text-sm font-semibold text-white mb-4">Jelajahi</h3>
                 <ul class="space-y-2">
@@ -45,7 +45,7 @@
                 </ul>
             </div>
 
-            {{-- Categories (example) --}}
+            
             <div class="md:col-span-2">
                 <h3 class="text-sm font-semibold text-white mb-4">Topik</h3>
                 <ul class="space-y-2">
@@ -56,7 +56,7 @@
                 </ul>
             </div>
 
-            {{-- Newsletter --}}
+            
             <div class="md:col-span-3">
                 <h3 class="text-sm font-semibold text-white mb-4">Newsletter</h3>
                 <p class="text-charcoal-300 text-sm mb-4">Dapatkan artikel terbaru langsung ke email Anda.</p>
@@ -72,10 +72,10 @@
             </div>
         </div>
 
-        {{-- Bottom Bar --}}
+        
         <div class="mt-10 pt-6 border-t border-charcoal-700 dark:border-charcoal-800 flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
             <p class="text-charcoal-400 text-sm">
-                © {{ date('Y') }} Blog Pribadi. Hak cipta dilindungi.
+                © <?php echo e(date('Y')); ?> Blog Pribadi. Hak cipta dilindungi.
             </p>
             <div class="flex space-x-5 text-sm">
                 <a href="#" class="text-charcoal-400 hover:text-primary-400 transition-colors">Privasi</a>
@@ -85,3 +85,4 @@
         </div>
     </div>
 </footer>
+<?php /**PATH C:\laragon\www\project1\resources\views/components/minimal-footer.blade.php ENDPATH**/ ?>

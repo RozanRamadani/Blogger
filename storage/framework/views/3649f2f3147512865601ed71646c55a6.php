@@ -1,8 +1,17 @@
-@php
+<?php
     // filepath: resources/views/edit-post.blade.php
-@endphp
-<x-layout>
-    <x-slot:title>{{ $title }}</x-slot:title>
+?>
+<?php if (isset($component)) { $__componentOriginal1f9e5f64f242295036c059d9dc1c375c = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal1f9e5f64f242295036c059d9dc1c375c = $attributes; } ?>
+<?php $component = App\View\Components\Layout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\Layout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+     <?php $__env->slot('title', null, []); ?> <?php echo e($title); ?> <?php $__env->endSlot(); ?>
 
     <section class="py-16 bg-cream-50 dark:bg-charcoal-950">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -11,35 +20,43 @@
                 <p class="text-charcoal-600 dark:text-charcoal-300">Perbarui konten artikel Anda</p>
             </div>
 
-            <form action="{{ route('articles.update', $post->slug) }}" method="POST" enctype="multipart/form-data" class="bg-white dark:bg-charcoal-800 rounded-2xl shadow-xl border border-charcoal-200 dark:border-charcoal-700 p-8 mb-6" x-data="{ files: [] }"
+            <form action="<?php echo e(route('articles.update', $post->slug)); ?>" method="POST" enctype="multipart/form-data" class="bg-white dark:bg-charcoal-800 rounded-2xl shadow-xl border border-charcoal-200 dark:border-charcoal-700 p-8 mb-6" x-data="{ files: [] }"
                   @submit="const dt = new DataTransfer(); files.forEach(f => dt.items.add(f)); $el.querySelector('#imgInput').files = dt.files;">
-                @csrf
-                @method('PUT')
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('PUT'); ?>
 
-                @if ($errors->any())
+                <?php if($errors->any()): ?>
                     <div class="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800">
                         <ul class="space-y-1 text-sm text-red-800 dark:text-red-200">
-                            @foreach ($errors->all() as $error)
+                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <li class="flex items-start">
                                     <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                                     </svg>
-                                    {{ $error }}
+                                    <?php echo e($error); ?>
+
                                 </li>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </ul>
                     </div>
-                @endif
+                <?php endif; ?>
 
                 <div class="space-y-6">
                     <div>
                         <label for="title" class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">Judul</label>
-                        <input type="text" name="title" id="title" value="{{ old('title', $post->title) }}"
+                        <input type="text" name="title" id="title" value="<?php echo e(old('title', $post->title)); ?>"
                             class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                             placeholder="Judul artikel" required>
-                        @error('title')
-                            <p class="text-sm text-red-600 dark:text-red-400 mt-2">{{ $message }}</p>
-                        @enderror
+                        <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <p class="text-sm text-red-600 dark:text-red-400 mt-2"><?php echo e($message); ?></p>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div>
@@ -48,26 +65,40 @@
                             class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                             required>
                             <option value="">-- Pilih Kategori --</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id', $post->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                            @endforeach
+                            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($category->id); ?>" <?php echo e(old('category_id', $post->category_id) == $category->id ? 'selected' : ''); ?>><?php echo e($category->name); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
-                        @error('category_id')
-                            <p class="text-sm text-red-600 dark:text-red-400 mt-2">{{ $message }}</p>
-                        @enderror
+                        <?php $__errorArgs = ['category_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <p class="text-sm text-red-600 dark:text-red-400 mt-2"><?php echo e($message); ?></p>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div>
                         <label for="body" class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">Konten</label>
                         <textarea name="body" id="body" rows="10"
                             class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all resize-none"
-                            placeholder="Tulis artikel Anda di sini..." required>{{ old('body', $post->body) }}</textarea>
-                        @error('body')
-                            <p class="text-sm text-red-600 dark:text-red-400 mt-2">{{ $message }}</p>
-                        @enderror
+                            placeholder="Tulis artikel Anda di sini..." required><?php echo e(old('body', $post->body)); ?></textarea>
+                        <?php $__errorArgs = ['body'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <p class="text-sm text-red-600 dark:text-red-400 mt-2"><?php echo e($message); ?></p>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    {{-- Images Section --}}
+                    
                     <div>
                         <input type="file" id="imgInput" name="images[]" accept="image/*" multiple class="hidden"
                                @change="Array.from($event.target.files).forEach(f => files.push(f)); $event.target.value = '';">
@@ -77,8 +108,8 @@
                             <span class="text-xs font-normal text-charcoal-500 dark:text-cream-400">- Klik "Pilih Gambar" untuk menambahkan gambar, max 2MB per gambar</span>
                         </label>
 
-                        {{-- Existing Images --}}
-                        @php
+                        
+                        <?php
                             $allImages = [];
                             if ($post->image) {
                                 $allImages[] = $post->image;
@@ -86,28 +117,28 @@
                             if ($post->images && is_array($post->images)) {
                                 $allImages = array_merge($allImages, $post->images);
                             }
-                        @endphp
+                        ?>
 
-                        @if(count($allImages) > 0)
+                        <?php if(count($allImages) > 0): ?>
                             <div class="mb-4">
-                                <p class="text-xs font-medium text-charcoal-600 dark:text-cream-300 mb-2">Gambar yang sudah ada ({{ count($allImages) }}):</p>
+                                <p class="text-xs font-medium text-charcoal-600 dark:text-cream-300 mb-2">Gambar yang sudah ada (<?php echo e(count($allImages)); ?>):</p>
                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                    @foreach($allImages as $index => $img)
-                                        <div class="relative group rounded-lg overflow-hidden shadow-md" id="existing-img-{{ $index }}">
-                                            <img src="{{ asset('storage/' . $img) }}" alt="Image {{ $index + 1 }}" class="w-full h-32 object-cover">
+                                    <?php $__currentLoopData = $allImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $img): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <div class="relative group rounded-lg overflow-hidden shadow-md" id="existing-img-<?php echo e($index); ?>">
+                                            <img src="<?php echo e(asset('storage/' . $img)); ?>" alt="Image <?php echo e($index + 1); ?>" class="w-full h-32 object-cover">
                                             <button type="button"
-                                                    onclick="document.getElementById('existing-img-{{ $index }}').remove(); document.getElementById('remove_image_{{ $index }}').disabled = false;"
+                                                    onclick="document.getElementById('existing-img-<?php echo e($index); ?>').remove(); document.getElementById('remove_image_<?php echo e($index); ?>').disabled = false;"
                                                     class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all shadow-lg">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                 </svg>
                                             </button>
-                                            <input type="hidden" id="remove_image_{{ $index }}" name="remove_images[]" value="{{ $img }}" disabled>
+                                            <input type="hidden" id="remove_image_<?php echo e($index); ?>" name="remove_images[]" value="<?php echo e($img); ?>" disabled>
                                         </div>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
                             </div>
-                        @endif
+                        <?php endif; ?>
 
                         <div x-show="files.length" class="mb-4">
                             <p class="text-xs font-medium text-charcoal-600 dark:text-cream-300 mb-2">Gambar baru (<span x-text="files.length"></span>):</p>
@@ -127,7 +158,7 @@
                             </div>
                         </div>
 
-                        {{-- Upload Button --}}
+                        
                         <div class="flex gap-2">
                             <button type="button" @click="$el.parentElement.parentElement.querySelector('#imgInput').click()"
                                     class="inline-flex items-center px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition shadow-sm hover:shadow-md">
@@ -143,9 +174,16 @@
                             </span>
                         </div>
 
-                        @error('images.*')
-                            <p class=\"text-sm text-red-600 dark:text-red-400 mt-2\">{{ $message }}</p>
-                        @enderror
+                        <?php $__errorArgs = ['images.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <p class=\"text-sm text-red-600 dark:text-red-400 mt-2\"><?php echo e($message); ?></p>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div class="flex gap-3 pt-4">
@@ -155,16 +193,16 @@
                             </svg>
                             Perbarui Artikel
                         </button>
-                        <a href="/posts/{{ $post->slug }}" class="inline-flex items-center px-6 py-3 bg-charcoal-200 dark:bg-charcoal-700 text-charcoal-700 dark:text-cream-200 hover:bg-charcoal-300 dark:hover:bg-charcoal-600 font-medium rounded-xl transition-colors">
+                        <a href="/posts/<?php echo e($post->slug); ?>" class="inline-flex items-center px-6 py-3 bg-charcoal-200 dark:bg-charcoal-700 text-charcoal-700 dark:text-cream-200 hover:bg-charcoal-300 dark:hover:bg-charcoal-600 font-medium rounded-xl transition-colors">
                             Cancel
                         </a>
                     </div>
                 </div>
             </form>
 
-            <form action="{{ route('articles.destroy', $post->slug) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus artikel ini? Tindakan ini tidak dapat dibatalkan.');" class="bg-white dark:bg-charcoal-800 rounded-2xl shadow-xl border border-red-200 dark:border-red-900/50 p-8">
-                @csrf
-                @method('DELETE')
+            <form action="<?php echo e(route('articles.destroy', $post->slug)); ?>" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus artikel ini? Tindakan ini tidak dapat dibatalkan.');" class="bg-white dark:bg-charcoal-800 rounded-2xl shadow-xl border border-red-200 dark:border-red-900/50 p-8">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('DELETE'); ?>
                 <div class="flex items-start justify-between">
                     <div>
                         <h3 class="font-display text-xl font-bold text-charcoal-900 dark:text-white mb-2">Zona Bahaya</h3>
@@ -180,4 +218,14 @@
             </form>
         </div>
     </section>
-</x-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal1f9e5f64f242295036c059d9dc1c375c)): ?>
+<?php $attributes = $__attributesOriginal1f9e5f64f242295036c059d9dc1c375c; ?>
+<?php unset($__attributesOriginal1f9e5f64f242295036c059d9dc1c375c); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal1f9e5f64f242295036c059d9dc1c375c)): ?>
+<?php $component = $__componentOriginal1f9e5f64f242295036c059d9dc1c375c; ?>
+<?php unset($__componentOriginal1f9e5f64f242295036c059d9dc1c375c); ?>
+<?php endif; ?>
+<?php /**PATH C:\laragon\www\project1\resources\views/edit-post.blade.php ENDPATH**/ ?>

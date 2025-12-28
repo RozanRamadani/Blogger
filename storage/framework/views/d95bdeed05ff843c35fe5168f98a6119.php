@@ -1,4 +1,4 @@
-{{-- Giscus Comments Component --}}
+
 <div class="mt-12 pt-8 border-t border-charcoal-100 dark:border-charcoal-800">
     <h3 class="font-display text-3xl font-bold text-charcoal-900 dark:text-cream-50 mb-6 flex items-center">
         <svg class="w-7 h-7 mr-3 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -9,10 +9,10 @@
 
     <div class="giscus-container bg-white dark:bg-charcoal-800 rounded-2xl p-6 shadow-lg border-2 border-charcoal-100 dark:border-charcoal-700">
         <script src="https://giscus.app/client.js"
-                data-repo="{{ $repo ?? 'RozanRamadani/Blogger' }}"
-                data-repo-id="{{ $repoId ?? 'R_kgDONhMV5Q' }}"
-                data-category="{{ $category ?? 'General' }}"
-                data-category-id="{{ $categoryId ?? 'DIC_kwDONhMV5c4Cl1YG' }}"
+                data-repo="<?php echo e($repo ?? 'RozanRamadani/Blogger'); ?>"
+                data-repo-id="<?php echo e($repoId ?? 'R_kgDONhMV5Q'); ?>"
+                data-category="<?php echo e($category ?? 'General'); ?>"
+                data-category-id="<?php echo e($categoryId ?? 'DIC_kwDONhMV5c4Cl1YG'); ?>"
                 data-mapping="pathname"
                 data-strict="0"
                 data-reactions-enabled="1"
@@ -26,7 +26,7 @@
         </script>
     </div>
 
-    {{-- Instructions for setting up Giscus --}}
+    
     <details class="mt-6 p-6 bg-cream-50 dark:bg-charcoal-900/50 rounded-xl border-2 border-primary-100 dark:border-primary-900/30">
         <summary class="cursor-pointer text-sm font-semibold text-primary-700 dark:text-primary-300 flex items-center">
             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -56,7 +56,7 @@
     </details>
 </div>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
     // Auto-update Giscus theme when dark mode toggles
     function updateGiscusTheme() {
@@ -80,4 +80,5 @@
         attributeFilter: ['class']
     });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+<?php /**PATH C:\laragon\www\project1\resources\views/components/giscus-comments.blade.php ENDPATH**/ ?>
