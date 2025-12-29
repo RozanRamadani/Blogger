@@ -4,38 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+
     
     <meta name="description" content="<?php echo e($metaDescription ?? 'Modern Laravel Blog - Share your thoughts and stories'); ?>">
     <meta name="keywords" content="<?php echo e($metaKeywords ?? 'blog, laravel, articles, technology'); ?>">
     <meta name="author" content="<?php echo e($metaAuthor ?? 'Laravel Blog'); ?>">
-    
+
     
     <meta property="og:type" content="website">
     <meta property="og:url" content="<?php echo e(url()->current()); ?>">
     <meta property="og:title" content="<?php echo e($title ?? 'Laravel Blog'); ?>">
     <meta property="og:description" content="<?php echo e($metaDescription ?? 'Modern Laravel Blog'); ?>">
     <meta property="og:image" content="<?php echo e($ogImage ?? asset('img/og-default.jpg')); ?>">
-    
+
     
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?php echo e($title ?? 'Laravel Blog'); ?>">
     <meta name="twitter:description" content="<?php echo e($metaDescription ?? 'Modern Laravel Blog'); ?>">
     <meta name="twitter:image" content="<?php echo e($ogImage ?? asset('img/og-default.jpg')); ?>">
-    
+
     <title><?php echo e($title ?? 'Home'); ?> | Laravel Blog</title>
-    
+
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
-    
+
     <script>
         (function() {
-            const theme = localStorage.getItem('theme') || 
+            const theme = localStorage.getItem('theme') ||
                          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -82,7 +83,7 @@ $value = context()->get($__contextArgs[0]); ?>' => 'https://schema.org',
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>
 
     </script>
-    
+
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body class="h-full bg-cream-50 dark:bg-charcoal-950 text-charcoal-900 dark:text-cream-50 font-sans antialiased transition-colors duration-300">
@@ -111,8 +112,8 @@ $value = context()->get($__contextArgs[0]); ?>' => 'https://schema.org',
         <main class="flex-grow">
             
             <?php if(session('success')): ?>
-                <div x-data="{ show: true }" 
-                     x-show="show" 
+                <div x-data="{ show: true }"
+                     x-show="show"
                      x-transition
                      x-init="$nextTick(() => setTimeout(() => show = false, 5000))"
                      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
@@ -130,8 +131,8 @@ $value = context()->get($__contextArgs[0]); ?>' => 'https://schema.org',
             <?php endif; ?>
 
             <?php if(session('error')): ?>
-                <div x-data="{ show: true }" 
-                     x-show="show" 
+                <div x-data="{ show: true }"
+                     x-show="show"
                      x-transition
                      x-init="$nextTick(() => setTimeout(() => show = false, 5000))"
                      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
@@ -147,7 +148,7 @@ $value = context()->get($__contextArgs[0]); ?>' => 'https://schema.org',
                     </div>
                 </div>
             <?php endif; ?>
-            
+
             <?php echo e($slot); ?>
 
         </main>
@@ -172,7 +173,10 @@ $value = context()->get($__contextArgs[0]); ?>' => 'https://schema.org',
 <?php $component = $__componentOriginal38c35f6bb1809ef0fccd4f46eb2f0e9c; ?>
 <?php unset($__componentOriginal38c35f6bb1809ef0fccd4f46eb2f0e9c); ?>
 <?php endif; ?>
+
         
+        <script src="<?php echo e(asset('js/like-bookmark.js')); ?>"></script>
+
         <?php echo $__env->yieldPushContent('scripts'); ?>
     </div>
 </body>

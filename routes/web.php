@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
@@ -55,8 +56,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('kontak.send');
 
     Route::get('/posts', function () {
-        $posts = Post::filter(request(['search', 'category', 'author']))
-            ->with(['author', 'category']) // Eager loading
+        $posts = Post::published()
+            ->filter(request(['search', 'category', 'author', 'tag']))
+            ->with(['author', 'category', 'tags']) // Eager loading
             ->latest()
             ->paginate(6)
             ->withQueryString();
@@ -83,8 +85,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Infinite scroll endpoint
     Route::get('/posts/load-more', function (Request $request) {
-        $posts = Post::filter($request->only(['search', 'category', 'author']))
-            ->with(['author', 'category'])
+        $posts = Post::published()
+            ->filter($request->only(['search', 'category', 'author', 'tag']))
+            ->with(['author', 'category', 'tags'])
             ->latest()
             ->paginate(6);
 
@@ -104,12 +107,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/posts/{post:slug}', function (Post $post) {
+        // Check if user can view this post (published or own draft)
+        if (!$post->isPublished() && (!Auth::check() || Auth::id() !== $post->author_id)) {
+            abort(404);
+        }
+
+        // Increment view count only for published posts
+        if ($post->isPublished()) {
+            $post->incrementViews();
+        }
+
         // Quick instrumentation to measure server-side render time and query count for this route.
         $start = microtime(true);
         DB::enableQueryLog();
 
         // Get related posts from same category, excluding current post
-        $relatedPosts = Post::where('category_id', $post->category_id)
+        $relatedPosts = Post::published()
+            ->where('category_id', $post->category_id)
             ->where('id', '!=', $post->id)
             ->with(['author', 'category'])
             ->latest()
@@ -143,6 +157,45 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/kontak', function () {
         return view('kontak', ['title' => 'Kontak']);
     });
+
+    // Like and Bookmark routes
+    Route::post('/posts/{post:slug}/like', [LikeController::class, 'toggleLike'])->name('posts.like');
+    Route::post('/posts/{post:slug}/bookmark', [LikeController::class, 'toggleBookmark'])->name('posts.bookmark');
+
+    // My Favorites page
+    Route::get('/my-favorites', function () {
+        $bookmarkedPosts = Auth::user()->bookmarkedPosts()
+            ->with(['author', 'category', 'tags'])
+            ->latest('bookmarks.created_at')
+            ->paginate(9);
+
+        return view('my-favorites', [
+            'title' => 'My Favorites',
+            'posts' => $bookmarkedPosts
+        ]);
+    })->name('favorites');
+
+    // Draft Management page
+    Route::get('/my-drafts', function () {
+        $drafts = Auth::user()->posts()
+            ->where('status', 'draft')
+            ->with(['category', 'tags'])
+            ->latest()
+            ->paginate(12);
+
+        $scheduled = Auth::user()->posts()
+            ->where('status', 'scheduled')
+            ->where('published_at', '>', now())
+            ->with(['category', 'tags'])
+            ->latest('published_at')
+            ->paginate(12);
+
+        return view('my-drafts', [
+            'title' => 'My Drafts & Scheduled Posts',
+            'drafts' => $drafts,
+            'scheduled' => $scheduled
+        ]);
+    })->name('drafts');
 
     Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
 

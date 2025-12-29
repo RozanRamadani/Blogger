@@ -83,6 +83,26 @@ unset($__defined_vars); ?>
 
         </p>
 
+        <?php if($post->tags && $post->tags->count() > 0): ?>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+                <?php $__currentLoopData = $post->tags->take(3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tag): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <a href="/posts?tag=<?php echo e($tag->slug); ?>"
+                       class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium transition-colors"
+                       style="background-color: <?php echo e($tag->color); ?>15; color: <?php echo e($tag->color); ?>; border: 1px solid <?php echo e($tag->color); ?>30;"
+                       title="<?php echo e($tag->name); ?>">
+                        #<?php echo e($tag->name); ?>
+
+                    </a>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php if($post->tags->count() > 3): ?>
+                    <span class="inline-flex items-center px-2 py-0.5 text-xs text-charcoal-500 dark:text-charcoal-400">
+                        +<?php echo e($post->tags->count() - 3); ?>
+
+                    </span>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
         <div class="flex items-center justify-between pt-4 border-t border-charcoal-200 dark:border-charcoal-700">
             <a href="/posts?author=<?php echo e($post->author->username); ?>" class="flex items-center space-x-2 group/author">
                 <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-xs font-semibold">
@@ -95,7 +115,41 @@ unset($__defined_vars); ?>
                 </span>
             </a>
 
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
+                <span class="inline-flex items-center text-xs text-charcoal-500 dark:text-charcoal-400" title="<?php echo e(number_format($post->views_count)); ?> views">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    <?php echo e($post->views_count >= 1000 ? number_format($post->views_count / 1000, 1) . 'k' : $post->views_count); ?>
+
+                </span>
+
+                <?php if(auth()->guard()->check()): ?>
+                    
+                    <button
+                        onclick="toggleLike(<?php echo e($post->id); ?>, '<?php echo e($post->slug); ?>')"
+                        id="like-btn-<?php echo e($post->id); ?>"
+                        class="inline-flex items-center text-xs transition-colors <?php echo e($post->isLikedBy(auth()->user()) ? 'text-red-500' : 'text-charcoal-500 dark:text-charcoal-400 hover:text-red-500'); ?>"
+                        title="<?php echo e($post->isLikedBy(auth()->user()) ? 'Unlike' : 'Like'); ?>">
+                        <svg class="w-4 h-4 mr-1 <?php echo e($post->isLikedBy(auth()->user()) ? 'fill-current' : ''); ?>" fill="<?php echo e($post->isLikedBy(auth()->user()) ? 'currentColor' : 'none'); ?>" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        <span id="likes-count-<?php echo e($post->id); ?>"><?php echo e($post->likes()->count()); ?></span>
+                    </button>
+
+                    
+                    <button
+                        onclick="toggleBookmark(<?php echo e($post->id); ?>, '<?php echo e($post->slug); ?>')"
+                        id="bookmark-btn-<?php echo e($post->id); ?>"
+                        class="inline-flex items-center text-xs transition-colors <?php echo e($post->isBookmarkedBy(auth()->user()) ? 'text-yellow-500' : 'text-charcoal-500 dark:text-charcoal-400 hover:text-yellow-500'); ?>"
+                        title="<?php echo e($post->isBookmarkedBy(auth()->user()) ? 'Remove bookmark' : 'Bookmark'); ?>">
+                        <svg class="w-4 h-4 <?php echo e($post->isBookmarkedBy(auth()->user()) ? 'fill-current' : ''); ?>" fill="<?php echo e($post->isBookmarkedBy(auth()->user()) ? 'currentColor' : 'none'); ?>" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                        </svg>
+                    </button>
+                <?php endif; ?>
+
                 <a href="/posts/<?php echo e($post->slug); ?>"
                    class="inline-flex items-center text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
                     Baca

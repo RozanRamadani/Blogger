@@ -185,6 +185,23 @@
                             </select>
                         </div>
 
+                        <div>
+                            <label class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-300 mb-2">
+                                Tags
+                                <span class="text-xs font-normal text-charcoal-500">- Pilih beberapa tags (optional)</span>
+                            </label>
+                            <select name="tags[]" multiple
+                                    class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                                    style="height: 120px;">
+                                <?php $__currentLoopData = App\Models\Tag::orderBy('name')->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tag): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($tag->id); ?>" <?php echo e(in_array($tag->id, old('tags', [])) ? 'selected' : ''); ?>>
+                                        <?php echo e($tag->name); ?>
+
+                                    </option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                            <p class="text-xs text-charcoal-500 dark:text-charcoal-400 mt-1">Hold Ctrl (Cmd di Mac) untuk pilih multiple tags</p>
+                        </div>
                     </div>
 
                     
@@ -233,15 +250,54 @@
                     </div>
                     </div>
 
-                    <div class="flex justify-end">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-300 mb-2">
+                                Status Artikel
+                            </label>
+                            <select name="status" id="status" required
+                                    onchange="document.getElementById('publishDateField').style.display = this.value === 'scheduled' ? 'block' : 'none'"
+                                    class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                <option value="published" <?php echo e(old('status', 'published') === 'published' ? 'selected' : ''); ?>>Publish Now</option>
+                                <option value="draft" <?php echo e(old('status') === 'draft' ? 'selected' : ''); ?>>Save as Draft</option>
+                                <option value="scheduled" <?php echo e(old('status') === 'scheduled' ? 'selected' : ''); ?>>Schedule for Later</option>
+                            </select>
+                        </div>
+
+                        <div id="publishDateField" style="display: <?php echo e(old('status') === 'scheduled' ? 'block' : 'none'); ?>">
+                            <label class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-300 mb-2">
+                                Publish Date & Time
+                            </label>
+                            <input type="datetime-local" name="published_at" value="<?php echo e(old('published_at')); ?>"
+                                   min="<?php echo e(now()->format('Y-m-d\TH:i')); ?>"
+                                   class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3">
                         <button type="submit"
                                 class="inline-flex items-center px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
-                            Publikasikan
+                            <span id="submitText">Publikasikan</span>
                             <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </button>
                     </div>
+
+                    <script>
+                        // Update submit button text based on status
+                        document.getElementById('status').addEventListener('change', function() {
+                            const submitText = document.getElementById('submitText');
+                            if (this.value === 'draft') {
+                                submitText.textContent = 'Simpan Draft';
+                            } else if (this.value === 'scheduled') {
+                                submitText.textContent = 'Jadwalkan';
+                            } else {
+                                submitText.textContent = 'Publikasikan';
+                            }
+                        });
+                    </script>
                 </div>
             </form>
         </div>

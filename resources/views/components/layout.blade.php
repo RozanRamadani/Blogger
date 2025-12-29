@@ -4,38 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     {{-- SEO Meta Tags --}}
     <meta name="description" content="{{ $metaDescription ?? 'Modern Laravel Blog - Share your thoughts and stories' }}">
     <meta name="keywords" content="{{ $metaKeywords ?? 'blog, laravel, articles, technology' }}">
     <meta name="author" content="{{ $metaAuthor ?? 'Laravel Blog' }}">
-    
+
     {{-- Open Graph / Social Media --}}
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ $title ?? 'Laravel Blog' }}">
     <meta property="og:description" content="{{ $metaDescription ?? 'Modern Laravel Blog' }}">
     <meta property="og:image" content="{{ $ogImage ?? asset('img/og-default.jpg') }}">
-    
+
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $title ?? 'Laravel Blog' }}">
     <meta name="twitter:description" content="{{ $metaDescription ?? 'Modern Laravel Blog' }}">
     <meta name="twitter:image" content="{{ $ogImage ?? asset('img/og-default.jpg') }}">
-    
+
     <title>{{ $title ?? 'Home' }} | Laravel Blog</title>
-    
+
     {{-- Preload critical fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
     <script>
         (function() {
-            const theme = localStorage.getItem('theme') || 
+            const theme = localStorage.getItem('theme') ||
                          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -74,7 +75,7 @@
             ]
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
     </script>
-    
+
     @stack('styles')
 </head>
 <body class="h-full bg-cream-50 dark:bg-charcoal-950 text-charcoal-900 dark:text-cream-50 font-sans antialiased transition-colors duration-300">
@@ -84,8 +85,8 @@
         <main class="flex-grow">
             {{-- Flash Messages with Alpine.js auto-hide --}}
             @if(session('success'))
-                <div x-data="{ show: true }" 
-                     x-show="show" 
+                <div x-data="{ show: true }"
+                     x-show="show"
                      x-transition
                      x-init="$nextTick(() => setTimeout(() => show = false, 5000))"
                      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
@@ -103,8 +104,8 @@
             @endif
 
             @if(session('error'))
-                <div x-data="{ show: true }" 
-                     x-show="show" 
+                <div x-data="{ show: true }"
+                     x-show="show"
                      x-transition
                      x-init="$nextTick(() => setTimeout(() => show = false, 5000))"
                      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
@@ -120,12 +121,15 @@
                     </div>
                 </div>
             @endif
-            
+
             {{ $slot }}
         </main>
 
         <x-minimal-footer />
-        
+
+        {{-- Like and Bookmark JS --}}
+        <script src="{{ asset('js/like-bookmark.js') }}"></script>
+
         @stack('scripts')
     </div>
 </body>

@@ -17,6 +17,10 @@ class ArticleController extends Controller
             'body' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'images.*' => 'nullable|image|max:2048',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id',
+            'status' => 'required|in:draft,published,scheduled',
+            'published_at' => 'nullable|date|after_or_equal:now',
         ]);
 
         // Build a readable slug and ensure uniqueness
@@ -34,6 +38,8 @@ class ArticleController extends Controller
             'author_id' => Auth::id(),
             'category_id' => $validated['category_id'],
             'slug' => $slug,
+            'status' => $validated['status'],
+            'published_at' => $validated['status'] === 'scheduled' ? $validated['published_at'] : ($validated['status'] === 'published' ? now() : null),
         ];
 
         // Handle multiple images upload
@@ -48,7 +54,18 @@ class ArticleController extends Controller
 
         $post = Post::create($postData);
 
-        return redirect()->back()->with('success', 'Article posted!');
+        // Attach tags if provided
+        if ($request->has('tags')) {
+            $post->tags()->attach($request->tags);
+        }
+
+        $message = match($validated['status']) {
+            'draft' => 'Article saved as draft!',
+            'scheduled' => 'Article scheduled for ' . \Carbon\Carbon::parse($validated['published_at'])->format('M d, Y g:i A'),
+            default => 'Article published!'
+        };
+
+        return redirect()->back()->with('success', $message);
     }
 
     /**
@@ -79,6 +96,10 @@ class ArticleController extends Controller
             'category_id' => 'required|exists:categories,id',
             'images.*' => 'nullable|image|max:2048',
             'remove_images' => 'nullable|array',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id',
+            'status' => 'required|in:draft,published,scheduled',
+            'published_at' => 'nullable|date',
         ]);
 
         // Update slug if title changed
@@ -96,6 +117,16 @@ class ArticleController extends Controller
         $post->title = $validated['title'];
         $post->body = $validated['body'];
         $post->category_id = $validated['category_id'];
+        $post->status = $validated['status'];
+
+        // Handle published_at based on status
+        if ($validated['status'] === 'scheduled') {
+            $post->published_at = $validated['published_at'];
+        } elseif ($validated['status'] === 'published' && !$post->published_at) {
+            $post->published_at = now();
+        } elseif ($validated['status'] === 'draft') {
+            $post->published_at = null;
+        }
 
         // Combine all existing images (from both image and images fields)
         $existingImages = [];
@@ -130,7 +161,20 @@ class ArticleController extends Controller
         $post->image = null; // Clear old single image field
         $post->save();
 
-        return redirect()->route('articles.edit', $post->slug)->with('success', 'Post updated successfully!');
+        // Sync tags
+        if ($request->has('tags')) {
+            $post->tags()->sync($request->tags);
+        } else {
+            $post->tags()->detach();
+        }
+
+        $message = match($validated['status']) {
+            'draft' => 'Post saved as draft!',
+            'scheduled' => 'Post scheduled for ' . \Carbon\Carbon::parse($validated['published_at'])->format('M d, Y g:i A'),
+            default => 'Post updated successfully!'
+        };
+
+        return redirect()->route('articles.edit', $post->slug)->with('success', $message);
     }
 
     /**

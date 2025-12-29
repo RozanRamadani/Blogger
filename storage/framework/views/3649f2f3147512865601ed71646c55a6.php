@@ -82,6 +82,34 @@ unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div>
+                        <label for="tags" class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">
+                            Tags
+                            <span class="text-xs font-normal text-charcoal-500 dark:text-charcoal-400">- Pilih beberapa tags (optional)</span>
+                        </label>
+                        <select name="tags[]" id="tags" multiple
+                            class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                            style="height: 120px;">
+                            <?php $__currentLoopData = App\Models\Tag::orderBy('name')->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tag): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($tag->id); ?>" <?php echo e(in_array($tag->id, old('tags', $post->tags->pluck('id')->toArray())) ? 'selected' : ''); ?>>
+                                    <?php echo e($tag->name); ?>
+
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                        <p class="text-xs text-charcoal-500 dark:text-charcoal-400 mt-1">Hold Ctrl (Cmd di Mac) untuk pilih multiple tags</p>
+                        <?php $__errorArgs = ['tags'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <p class="text-sm text-red-600 dark:text-red-400 mt-2"><?php echo e($message); ?></p>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
+
+                    <div>
                         <label for="body" class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">Konten</label>
                         <textarea name="body" id="body" rows="10"
                             class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all resize-none"
@@ -186,17 +214,65 @@ endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
 
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-charcoal-700 dark:text-cream-300 mb-2">
+                                Status Artikel
+                            </label>
+                            <select name="status" id="status" required
+                                    onchange="document.getElementById('publishDateField').style.display = this.value === 'scheduled' ? 'block' : 'none'"
+                                    class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                <option value="published" <?php echo e(old('status', $post->status) === 'published' ? 'selected' : ''); ?>>Published</option>
+                                <option value="draft" <?php echo e(old('status', $post->status) === 'draft' ? 'selected' : ''); ?>>Draft</option>
+                                <option value="scheduled" <?php echo e(old('status', $post->status) === 'scheduled' ? 'selected' : ''); ?>>Scheduled</option>
+                            </select>
+                        </div>
+
+                        <div id="publishDateField" style="display: <?php echo e(old('status', $post->status) === 'scheduled' ? 'block' : 'none'); ?>">
+                            <label class="block text-sm font-medium text-charcoal-700 dark:text-cream-300 mb-2">
+                                Publish Date & Time
+                            </label>
+                            <input type="datetime-local" name="published_at"
+                                   value="<?php echo e(old('published_at', $post->published_at ? $post->published_at->format('Y-m-d\TH:i') : '')); ?>"
+                                   class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                        </div>
+                    </div>
+
                     <div class="flex gap-3 pt-4">
-                        <button type="submit" class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                        <button type="submit" id="submitBtn" class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
-                            Perbarui Artikel
+                            <span id="submitText">Perbarui Artikel</span>
                         </button>
                         <a href="/posts/<?php echo e($post->slug); ?>" class="inline-flex items-center px-6 py-3 bg-charcoal-200 dark:bg-charcoal-700 text-charcoal-700 dark:text-cream-200 hover:bg-charcoal-300 dark:hover:bg-charcoal-600 font-medium rounded-xl transition-colors">
                             Cancel
                         </a>
                     </div>
+
+                    <script>
+                        // Update submit button text based on status
+                        document.getElementById('status').addEventListener('change', function() {
+                            const submitText = document.getElementById('submitText');
+                            if (this.value === 'draft') {
+                                submitText.textContent = 'Simpan Draft';
+                            } else if (this.value === 'scheduled') {
+                                submitText.textContent = 'Jadwalkan';
+                            } else {
+                                submitText.textContent = 'Publikasikan';
+                            }
+                        });
+
+                        // Set initial button text
+                        const initialStatus = document.getElementById('status').value;
+                        const submitText = document.getElementById('submitText');
+                        if (initialStatus === 'draft') {
+                            submitText.textContent = 'Simpan Draft';
+                        } else if (initialStatus === 'scheduled') {
+                            submitText.textContent = 'Jadwalkan';
+                        }
+                    </script>
                 </div>
             </form>
 
