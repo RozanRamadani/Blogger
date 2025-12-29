@@ -23,38 +23,78 @@
             </div>
 
             
-            <form class="max-w-2xl mx-auto">
-                <?php if(request('category')): ?>
-                    <input type="hidden" name="category" value="<?php echo e(request('category')); ?>">
-                <?php endif; ?>
-                <?php if(request('author')): ?>
-                    <input type="hidden" name="author" value="<?php echo e(request('author')); ?>">
-                <?php endif; ?>
-                <div class="flex gap-3">
-                    <div class="relative flex-1">
-                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-charcoal-400 dark:text-charcoal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
-                        </svg>
-                        <input
-                            type="search"
-                            id="search"
-                            name="search"
-                            value="<?php echo e(request('search')); ?>"
-                            placeholder="Cari artikel..."
-                            class="w-full pl-12 pr-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-800 text-charcoal-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all">
-                    </div>
-                    <button type="submit"
-                        class="px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap">
-                        Cari
-                    </button>
-                </div>
-            </form>
+            <div class="max-w-4xl mx-auto">
+                <?php if (isset($component)) { $__componentOriginal62c30857e99e56188381f1059450a302 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal62c30857e99e56188381f1059450a302 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.advanced-search','data' => ['categories' => $categories,'tags' => $tags,'authors' => $authors]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('advanced-search'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['categories' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($categories),'tags' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tags),'authors' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($authors)]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal62c30857e99e56188381f1059450a302)): ?>
+<?php $attributes = $__attributesOriginal62c30857e99e56188381f1059450a302; ?>
+<?php unset($__attributesOriginal62c30857e99e56188381f1059450a302); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal62c30857e99e56188381f1059450a302)): ?>
+<?php $component = $__componentOriginal62c30857e99e56188381f1059450a302; ?>
+<?php unset($__componentOriginal62c30857e99e56188381f1059450a302); ?>
+<?php endif; ?>
+            </div>
         </div>
     </section>
 
     
     <section class="py-12 md:py-16 bg-cream-50 dark:bg-charcoal-950">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            
+            <?php if(request()->anyFilled(['search', 'category', 'tag', 'author'])): ?>
+                <div class="mb-6 flex flex-wrap items-center gap-2">
+                    <span class="text-sm font-medium text-charcoal-600 dark:text-charcoal-400">Active Filters:</span>
+
+                    <?php if(request('search')): ?>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            Search: "<?php echo e(request('search')); ?>"
+                        </span>
+                    <?php endif; ?>
+
+                    <?php if(request('category')): ?>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm">
+                            Category: <?php echo e($categories->firstWhere('slug', request('category'))->name ?? request('category')); ?>
+
+                        </span>
+                    <?php endif; ?>
+
+                    <?php if(request('tag')): ?>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-sm">
+                            Tag: #<?php echo e($tags->firstWhere('slug', request('tag'))->name ?? request('tag')); ?>
+
+                        </span>
+                    <?php endif; ?>
+
+                    <?php if(request('author')): ?>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm">
+                            Author: <?php echo e($authors->firstWhere('username', request('author'))->name ?? request('author')); ?>
+
+                        </span>
+                    <?php endif; ?>
+
+                    <a href="/posts" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-charcoal-200 dark:bg-charcoal-700 text-charcoal-700 dark:text-charcoal-300 text-sm hover:bg-charcoal-300 dark:hover:bg-charcoal-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Clear All
+                    </a>
+                </div>
+            <?php endif; ?>
 
             
             <?php if($posts->count() > 0 && !request('search') && !request('category') && !request('author')): ?>
@@ -154,20 +194,26 @@
 
             
             <?php if($posts->count() > 0): ?>
-                <div class="mb-8">
+                <div class="mb-8 flex items-center justify-between">
                     <h3 class="text-2xl font-bold text-charcoal-900 dark:text-white">
                         <?php if(request('search')): ?>
-                            Hasil pencarian "<?php echo e(request('search')); ?>"
+                            Hasil pencarian
                         <?php elseif(request('category')): ?>
-                            Kategori: <?php echo e(ucfirst(request('category'))); ?>
+                            Kategori: <?php echo e($categories->firstWhere('slug', request('category'))->name ?? request('category')); ?>
+
+                        <?php elseif(request('tag')): ?>
+                            Tag: #<?php echo e($tags->firstWhere('slug', request('tag'))->name ?? request('tag')); ?>
 
                         <?php elseif(request('author')): ?>
-                            Oleh <?php echo e(ucfirst(request('author'))); ?>
+                            Oleh <?php echo e($authors->firstWhere('username', request('author'))->name ?? request('author')); ?>
 
                         <?php else: ?>
                             Artikel Terbaru
                         <?php endif; ?>
                     </h3>
+                    <span class="text-sm px-4 py-2 rounded-full bg-white dark:bg-charcoal-800 border border-charcoal-200 dark:border-charcoal-700 text-charcoal-600 dark:text-charcoal-400">
+                        <?php echo e($posts->total()); ?> artikel ditemukan
+                    </span>
                 </div>
             <?php endif; ?>
 
@@ -205,22 +251,40 @@
                         <div class="max-w-md mx-auto">
                             <div class="w-24 h-24 mx-auto mb-8 rounded-full bg-cream-100 dark:bg-charcoal-800 flex items-center justify-center">
                                 <svg class="w-12 h-12 text-charcoal-300 dark:text-charcoal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
                             <h3 class="font-display text-3xl font-bold text-charcoal-900 dark:text-white mb-4">
-                                Tidak ada artikel ditemukan
+                                <?php if(request()->anyFilled(['search', 'category', 'tag', 'author'])): ?>
+                                    Tidak ada artikel ditemukan
+                                <?php else: ?>
+                                    Belum ada artikel
+                                <?php endif; ?>
                             </h3>
                             <p class="text-lg text-charcoal-600 dark:text-charcoal-300 mb-8">
-                                Coba ubah pencarian atau lihat semua artikel.
+                                <?php if(request()->anyFilled(['search', 'category', 'tag', 'author'])): ?>
+                                    Coba gunakan kata kunci lain atau hapus beberapa filter.
+                                <?php else: ?>
+                                    Jadilah yang pertama menulis artikel!
+                                <?php endif; ?>
                             </p>
-                            <a href="/posts"
-                               class="inline-flex items-center px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                                </svg>
-                                Lihat semua artikel
-                            </a>
+                            <?php if(request()->anyFilled(['search', 'category', 'tag', 'author'])): ?>
+                                <a href="/posts"
+                                   class="inline-flex items-center px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                    Hapus Semua Filter
+                                </a>
+                            <?php else: ?>
+                                <a href="/"
+                                   class="inline-flex items-center px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Buat Artikel
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endif; ?>

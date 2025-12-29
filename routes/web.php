@@ -63,7 +63,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->paginate(6)
             ->withQueryString();
 
-        return view('posts', ['title' => 'Blog', 'posts' => $posts]);
+        // Get all categories, tags, and authors for filter dropdowns
+        $categories = Category::withCount('posts')->orderBy('name')->get();
+        $tags = \App\Models\Tag::withCount('posts')->orderBy('name')->get();
+        $authors = User::has('posts')->withCount('posts')->orderBy('name')->get();
+
+        return view('posts', [
+            'title' => 'Blog',
+            'posts' => $posts,
+            'categories' => $categories,
+            'tags' => $tags,
+            'authors' => $authors
+        ]);
     });
 
     // Users page
@@ -162,12 +173,46 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/posts/{post:slug}/like', [LikeController::class, 'toggleLike'])->name('posts.like');
     Route::post('/posts/{post:slug}/bookmark', [LikeController::class, 'toggleBookmark'])->name('posts.bookmark');
 
-    // My Favorites page
-    Route::get('/my-favorites', function () {
-        $bookmarkedPosts = Auth::user()->bookmarkedPosts()
-            ->with(['author', 'category', 'tags'])
-            ->latest('bookmarks.created_at')
-            ->paginate(9);
+    // Search API
+    Route::get('/api/search-posts', function (Request $request) {
+        $query = $request->input('q');
+
+        if (strlen($query) < 2) {
+            return response()->json([]);
+        }
+
+        try {
+            $posts = Post::published()
+                ->where(function($q) use ($query) {
+                    $q->where('title', 'like', "%{$query}%")
+                      ->orWhere('body', 'like', "%{$query}%");
+                })
+                ->with(['author', 'category'])
+                ->latest()
+                ->take(5)
+                ->get()
+                ->map(function($post) {
+                    $image = null;
+                    if ($post->images && is_array($post->images) && count($post->images) > 0) {
+                        $image = asset('storage/' . $post->images[0]);
+                    }
+
+                    return [
+                        'id' => $post->id,
+                        'slug' => $post->slug,
+                        'title' => $post->title,
+                        'excerpt' => Str::limit(strip_tags($post->body), 100),
+                        'image' => $image,
+                        'category' => $post->category ? $post->category->name : 'Uncategorized',
+                        'date' => $post->published_at ? $post->published_at->diffForHumans() : $post->created_at->diffForHumans(),
+                    ];
+                });
+
+            return response()->json($posts);
+        } catch (\Exception $e) {
+            \Log::error('Search API error: ' . $e->getMessage());
+            return response()->json(['error' => 'Search failed'], 500);
+        }
 
         return view('my-favorites', [
             'title' => 'My Favorites',
