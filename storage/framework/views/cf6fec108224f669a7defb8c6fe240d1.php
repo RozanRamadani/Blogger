@@ -127,7 +127,109 @@ endif;
 unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    <div class="border-t border-charcoal-200 dark:border-charcoal-700 pt-6 mt-6">
+                    
+                    <div class="md:col-span-2">
+                        <label for="bio" class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">
+                            Bio / Tentang Saya
+                        </label>
+                        <textarea name="bio" id="bio" rows="4"
+                            class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all resize-none"
+                            placeholder="Ceritakan sedikit tentang diri Anda..."><?php echo e(old('bio', $user->bio)); ?></textarea>
+                        <?php $__errorArgs = ['bio'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                            <p class="text-sm text-red-600 dark:text-red-400 mt-2"><?php echo e($message); ?></p>
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                    </div>
+
+                    
+                    <div class="md:col-span-2 border-t border-charcoal-200 dark:border-charcoal-700 pt-6 mt-2">
+                        <h3 class="text-lg font-bold text-charcoal-900 dark:text-white mb-4">Social Media Links</h3>
+                        <div class="grid gap-6 md:grid-cols-2">
+                            <div>
+                                <label for="website_url" class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">
+                                    🌐 Website
+                                </label>
+                                <input type="url" name="website_url" id="website_url" value="<?php echo e(old('website_url', $user->website_url)); ?>"
+                                    class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                                    placeholder="https://yourwebsite.com">
+                                <?php $__errorArgs = ['website_url'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <p class="text-sm text-red-600 dark:text-red-400 mt-2"><?php echo e($message); ?></p>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+
+                            <div>
+                                <label for="twitter_url" class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">
+                                    𝕏 Twitter / X
+                                </label>
+                                <input type="url" name="twitter_url" id="twitter_url" value="<?php echo e(old('twitter_url', $user->twitter_url)); ?>"
+                                    class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                                    placeholder="https://twitter.com/username">
+                                <?php $__errorArgs = ['twitter_url'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <p class="text-sm text-red-600 dark:text-red-400 mt-2"><?php echo e($message); ?></p>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+
+                            <div>
+                                <label for="github_url" class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">
+                                    🐙 GitHub
+                                </label>
+                                <input type="url" name="github_url" id="github_url" value="<?php echo e(old('github_url', $user->github_url)); ?>"
+                                    class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                                    placeholder="https://github.com/username">
+                                <?php $__errorArgs = ['github_url'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <p class="text-sm text-red-600 dark:text-red-400 mt-2"><?php echo e($message); ?></p>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+
+                            <div>
+                                <label for="linkedin_url" class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">
+                                    💼 LinkedIn
+                                </label>
+                                <input type="url" name="linkedin_url" id="linkedin_url" value="<?php echo e(old('linkedin_url', $user->linkedin_url)); ?>"
+                                    class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                                    placeholder="https://linkedin.com/in/username">
+                                <?php $__errorArgs = ['linkedin_url'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <p class="text-sm text-red-600 dark:text-red-400 mt-2"><?php echo e($message); ?></p>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 border-t border-charcoal-200 dark:border-charcoal-700 pt-6 mt-6">
                         <h3 class="text-lg font-bold text-charcoal-900 dark:text-white mb-3">Ubah Password</h3>
                         <p class="text-sm text-charcoal-600 dark:text-charcoal-400 mb-4">Kosongkan jika tidak ingin mengubah password</p>
 

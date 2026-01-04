@@ -158,7 +158,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/posts/{post:slug}', [ArticleController::class, 'destroy'])->name('articles.destroy');
 
     Route::get('/author/{user:username}', function (User $user) {
-        return view('posts', ['title' => count($user->posts) . ' Articles by ' . $user->name, 'posts' => $user->posts]);
+        // Get author statistics
+        $stats = [
+            'total_posts' => $user->posts()->where('status', 'published')->count(),
+            'total_views' => $user->posts()->where('status', 'published')->sum('views_count'),
+            'total_likes' => $user->posts()->where('status', 'published')->withCount('likes')->get()->sum('likes_count'),
+        ];
+
+        // Get published posts
+        $posts = $user->posts()
+            ->published()
+            ->with(['category', 'tags'])
+            ->latest()
+            ->paginate(9);
+
+        return view('author-profile', [
+            'title' => $user->name,
+            'author' => $user,
+            'posts' => $posts,
+            'stats' => $stats
+        ]);
     });
 
     Route::get('/categories/{category:slug}', function (Category $category) {

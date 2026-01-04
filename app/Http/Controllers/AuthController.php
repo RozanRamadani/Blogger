@@ -85,11 +85,21 @@ class AuthController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'bio' => 'nullable|string|max:1000',
+            'website_url' => 'nullable|url|max:255',
+            'twitter_url' => 'nullable|url|max:255',
+            'github_url' => 'nullable|url|max:255',
+            'linkedin_url' => 'nullable|url|max:255',
         ]);
 
         $user->name = $validated['name'];
         $user->username = $validated['username'];
         $user->email = $validated['email'];
+        $user->bio = $validated['bio'] ?? null;
+        $user->website_url = $validated['website_url'] ?? null;
+        $user->twitter_url = $validated['twitter_url'] ?? null;
+        $user->github_url = $validated['github_url'] ?? null;
+        $user->linkedin_url = $validated['linkedin_url'] ?? null;
 
         if (!empty($validated['password'])) {
             $user->password = bcrypt($validated['password']);
