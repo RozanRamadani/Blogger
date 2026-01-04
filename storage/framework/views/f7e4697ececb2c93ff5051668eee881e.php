@@ -187,20 +187,29 @@
 
                         <div>
                             <label class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-300 mb-2">
-                                Tags
-                                <span class="text-xs font-normal text-charcoal-500">- Pilih beberapa tags (optional)</span>
+                                🏷️ Tags
+                                <span class="text-xs font-normal text-charcoal-500">- Tambahkan tags untuk artikel Anda</span>
                             </label>
-                            <select name="tags[]" multiple
-                                    class="w-full px-4 py-3 rounded-lg border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                                    style="height: 120px;">
-                                <?php $__currentLoopData = App\Models\Tag::orderBy('name')->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tag): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($tag->id); ?>" <?php echo e(in_array($tag->id, old('tags', [])) ? 'selected' : ''); ?>>
-                                        <?php echo e($tag->name); ?>
-
-                                    </option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                            <p class="text-xs text-charcoal-500 dark:text-charcoal-400 mt-1">Hold Ctrl (Cmd di Mac) untuk pilih multiple tags</p>
+                            <?php if (isset($component)) { $__componentOriginal02c9e45c5937871c3c5a5f3468b37d66 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal02c9e45c5937871c3c5a5f3468b37d66 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.tag-input','data' => ['selectedTags' => []]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('tag-input'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['selectedTags' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([])]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal02c9e45c5937871c3c5a5f3468b37d66)): ?>
+<?php $attributes = $__attributesOriginal02c9e45c5937871c3c5a5f3468b37d66; ?>
+<?php unset($__attributesOriginal02c9e45c5937871c3c5a5f3468b37d66); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal02c9e45c5937871c3c5a5f3468b37d66)): ?>
+<?php $component = $__componentOriginal02c9e45c5937871c3c5a5f3468b37d66; ?>
+<?php unset($__componentOriginal02c9e45c5937871c3c5a5f3468b37d66); ?>
+<?php endif; ?>
                         </div>
                     </div>
 

@@ -17,8 +17,8 @@ class ArticleController extends Controller
             'body' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'images.*' => 'nullable|image|max:2048',
-            'tags' => 'nullable|array',
-            'tags.*' => 'exists:tags,id',
+            'tags' => 'nullable|array|max:10',
+            'tags.*' => 'nullable|string|max:50',
             'status' => 'required|in:draft,published,scheduled',
             'published_at' => 'nullable|date|after_or_equal:now',
         ]);
@@ -54,9 +54,24 @@ class ArticleController extends Controller
 
         $post = Post::create($postData);
 
-        // Attach tags if provided
+        // Handle tags - create new tags if needed and attach
         if ($request->has('tags')) {
-            $post->tags()->attach($request->tags);
+            $tagIds = [];
+            foreach ($request->tags as $tagInput) {
+                // If numeric, it's an existing tag ID
+                if (is_numeric($tagInput)) {
+                    $tagIds[] = $tagInput;
+                } else {
+                    // Create new tag
+                    $slug = \Str::slug($tagInput);
+                    $tag = \App\Models\Tag::firstOrCreate(
+                        ['slug' => $slug],
+                        ['name' => $tagInput]
+                    );
+                    $tagIds[] = $tag->id;
+                }
+            }
+            $post->tags()->attach($tagIds);
         }
 
         $message = match($validated['status']) {
@@ -96,8 +111,8 @@ class ArticleController extends Controller
             'category_id' => 'required|exists:categories,id',
             'images.*' => 'nullable|image|max:2048',
             'remove_images' => 'nullable|array',
-            'tags' => 'nullable|array',
-            'tags.*' => 'exists:tags,id',
+            'tags' => 'nullable|array|max:10',
+            'tags.*' => 'nullable|string|max:50',
             'status' => 'required|in:draft,published,scheduled',
             'published_at' => 'nullable|date',
         ]);
@@ -161,9 +176,24 @@ class ArticleController extends Controller
         $post->image = null; // Clear old single image field
         $post->save();
 
-        // Sync tags
+        // Handle tags - create new tags if needed and sync
         if ($request->has('tags')) {
-            $post->tags()->sync($request->tags);
+            $tagIds = [];
+            foreach ($request->tags as $tagInput) {
+                // If numeric, it's an existing tag ID
+                if (is_numeric($tagInput)) {
+                    $tagIds[] = $tagInput;
+                } else {
+                    // Create new tag
+                    $slug = \Str::slug($tagInput);
+                    $tag = \App\Models\Tag::firstOrCreate(
+                        ['slug' => $slug],
+                        ['name' => $tagInput]
+                    );
+                    $tagIds[] = $tag->id;
+                }
+            }
+            $post->tags()->sync($tagIds);
         } else {
             $post->tags()->detach();
         }

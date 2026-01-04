@@ -58,20 +58,11 @@
                     </div>
 
                     <div>
-                        <label for="tags" class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">
-                            Tags
-                            <span class="text-xs font-normal text-charcoal-500 dark:text-charcoal-400">- Pilih beberapa tags (optional)</span>
+                        <label class="block text-sm font-medium text-charcoal-700 dark:text-charcoal-200 mb-2">
+                            🏷️ Tags
+                            <span class="text-xs font-normal text-charcoal-500 dark:text-charcoal-400">- Tambahkan tags untuk artikel Anda</span>
                         </label>
-                        <select name="tags[]" id="tags" multiple
-                            class="w-full px-4 py-3 border border-charcoal-300 dark:border-charcoal-600 bg-white dark:bg-charcoal-900 text-charcoal-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
-                            style="height: 120px;">
-                            @foreach (App\Models\Tag::orderBy('name')->get() as $tag)
-                                <option value="{{ $tag->id }}" {{ in_array($tag->id, old('tags', $post->tags->pluck('id')->toArray())) ? 'selected' : '' }}>
-                                    {{ $tag->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <p class="text-xs text-charcoal-500 dark:text-charcoal-400 mt-1">Hold Ctrl (Cmd di Mac) untuk pilih multiple tags</p>
+                        <x-tag-input :selectedTags="$post->tags->map(fn($tag) => ['id' => $tag->id, 'name' => $tag->name, 'slug' => $tag->slug])->toArray()" />
                         @error('tags')
                             <p class="text-sm text-red-600 dark:text-red-400 mt-2">{{ $message }}</p>
                         @enderror

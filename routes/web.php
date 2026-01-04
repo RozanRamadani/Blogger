@@ -232,12 +232,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
             \Log::error('Search API error: ' . $e->getMessage());
             return response()->json(['error' => 'Search failed'], 500);
         }
+    });
 
-        return view('my-favorites', [
-            'title' => 'My Favorites',
-            'posts' => $bookmarkedPosts
-        ]);
-    })->name('favorites');
+    // Tags Search API
+    Route::get('/api/tags/search', function (Request $request) {
+        $query = $request->input('q', '');
+
+        $tags = \App\Models\Tag::where('name', 'like', "%{$query}%")
+            ->withCount('posts')
+            ->orderBy('posts_count', 'desc')
+            ->take(10)
+            ->get()
+            ->map(function($tag) {
+                return [
+                    'id' => $tag->id,
+                    'name' => $tag->name,
+                    'slug' => $tag->slug,
+                    'posts_count' => $tag->posts_count
+                ];
+            });
+
+        return response()->json($tags);
+    });
 
     // Draft Management page
     Route::get('/my-drafts', function () {
